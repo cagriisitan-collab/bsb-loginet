@@ -157,33 +157,40 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        /* 1. HARİTA İŞLEMLERİ */
-        /* 1. HARİTA İŞLEMLERİ */
-        var map = L.map('map').setView([42.5, 33.5], 6);
+    /* 1. HARİTA İŞLEMLERİ */
+        var map = L.map('map').setView([42.5, 36.0], 6);
 
-        // Temel harita altlığı
-        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // Limanları ve detaylarını tanımlıyoruz
-        var samsun = L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b><br>Kapasite: Yüksek<br>Türü: Konteyner/Genel Yük');
-        var varna = L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b><br>Kapasite: Orta<br>Türü: Ro-Ro/Dökme');
-        var batumi = L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b><br>Kapasite: Yüksek<br>Türü: Enerji/Konteyner');
+        // Limanlar
+        var limanlar = L.layerGroup([
+            L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>'),
+            L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>'),
+            L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>')
+        ]).addTo(map);
 
-        var limanlar = L.layerGroup([samsun, varna, batumi]).addTo(map);
+        // Lojistik Merkezleri ve Sınır Kapıları
+        var noktalar = L.layerGroup([
+            // Lojistik Merkezleri
+            L.circleMarker([41.15, 36.20], {color: 'red', radius: 6}).bindPopup('<b>Samsun Lojistik Köyü</b>'),
+            // Sınır Kapıları (Özel İkon veya Renk)
+            L.marker([41.52, 41.53], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Sarp Sınır Kapısı</b><br>TR-GE Geçiş Noktası'),
+            L.marker([42.22, 27.50], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Dereköy Sınır Kapısı</b><br>TR-BG Geçiş Noktası'),
+            L.marker([41.20, 27.35], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Hamzabeyli Sınır Kapısı</b><br>TR-BG Alternatif')
+        ]).addTo(map);
 
-        // Rotaları tanımlıyoruz
-        var denizRotasi = L.polyline([[41.2867, 36.33], [43.2141, 27.9147]], {color: 'blue', weight: 4});
-        var demiryolu = L.polyline([[41.2867, 36.33], [41.6168, 41.6367]], {color: 'green', weight: 3, dashArray: '5, 10'});
+        // Rotalar
+        var denizYolu = L.polyline([[[41.2867, 36.33], [43.2141, 27.9147]], [[41.2867, 36.33], [41.6168, 41.6367]]], {color: 'blue', weight: 4});
+        var karaYolu = L.polyline([[43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367]], {color: 'red', weight: 3, dashArray: '10, 10'});
 
-        var rotalar = L.layerGroup([denizRotasi, demiryolu]).addTo(map);
-
-        // Katman kontrolünü sağ üst köşeye ekliyoruz
+        // Katmanlar
         var overlayMaps = {
             "Limanlar": limanlar,
-            "Lojistik Rotaları": rotalar
+            "Lojistik Merkezleri & Kapılar": noktalar,
+            "Deniz Rotaları": denizYolu.addTo(map),
+            "Kara Yolu": karaYolu.addTo(map)
         };
         L.control.layers(null, overlayMaps).addTo(map);
 
