@@ -159,18 +159,56 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         /* 1. HARİTA İŞLEMLERİ */
+        /* 1. HARİTA İŞLEMLERİ */
         var map = L.map('map').setView([42.5, 33.5], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+        // Temel harita altlığı
+        var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        var samsun = L.marker([41.2867, 36.33]).addTo(map).bindPopup('<b>Samsun (Türkiye)</b>');
-        var varna = L.marker([43.2141, 27.9147]).addTo(map).bindPopup('<b>Varna (Bulgaristan)</b>');
-        var batumi = L.marker([41.6168, 41.6367]).addTo(map).bindPopup('<b>Batum (Gürcistan)</b>');
+        // Limanları ve detaylarını tanımlıyoruz
+        var samsun = L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b><br>Kapasite: Yüksek<br>Türü: Konteyner/Genel Yük');
+        var varna = L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b><br>Kapasite: Orta<br>Türü: Ro-Ro/Dökme');
+        var batumi = L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b><br>Kapasite: Yüksek<br>Türü: Enerji/Konteyner');
 
-        // Deniz ticaret rotalarını haritaya çiziyoruz
-        var rotalar = [ [41.2867, 36.33], [43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367] ];
-        var denizRotasi = L.polyline(rotalar, {color: '#ff9900', weight: 3, dashArray: '10, 10'}).addTo(map);
+        var limanlar = L.layerGroup([samsun, varna, batumi]).addTo(map);
+
+        // Rotaları tanımlıyoruz
+        var denizRotasi = L.polyline([[41.2867, 36.33], [43.2141, 27.9147]], {color: 'blue', weight: 4});
+        var demiryolu = L.polyline([[41.2867, 36.33], [41.6168, 41.6367]], {color: 'green', weight: 3, dashArray: '5, 10'});
+
+        var rotalar = L.layerGroup([denizRotasi, demiryolu]).addTo(map);
+
+        // Katman kontrolünü sağ üst köşeye ekliyoruz
+        var overlayMaps = {
+            "Limanlar": limanlar,
+            "Lojistik Rotaları": rotalar
+        };
+        L.control.layers(null, overlayMaps).addTo(map);
+
+        /* 2. YAPAY ZEKA (SİMÜLASYON) İŞLEMLERİ */
+        function mesajGonder() {
+            var input = document.getElementById('userInput');
+            var mesaj = input.value;
+            if(mesaj.trim() === "") return;
+            
+            var chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += '<div class="chat-message user-message"><strong>Siz:</strong> ' + mesaj + '</div>';
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            setTimeout(function() {
+                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> Bu bir görsel arayüz testidir. API entegrasyonu tamamlandığında gümrük verileri burada listelenecektir.</div>';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+        }
+
+        function klavyeKontrol(event) {
+            if (event.key === "Enter") {
+                mesajGonder();
+            }
+        }
 
         /* 2. YAPAY ZEKA (SİMÜLASYON) İŞLEMLERİ */
         function mesajGonder() {
