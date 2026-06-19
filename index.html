@@ -29,10 +29,12 @@
 
         /* 2. HERO SECTION */
         .hero-section { display: flex; height: calc(100vh - 75px); padding: 20px; gap: 20px; min-height: 500px; }
-        .map-container { flex-grow: 1; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 2px solid white; position: relative; background: #aadaff; }
-        #map { width: 100%; height: 100%; touch-action: pan-y !important; }
+        
+        /* DÜZELTME 1: Harita CSS Çökme Koruması */
+        .map-container { flex-grow: 1; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 2px solid white; position: relative; background: #aadaff; min-height: 400px; }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: pan-y !important; }
 
-        .chat-panel { width: 360px; background: white; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0; }
+        .chat-panel { width: 360px; background: white; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0; position: relative; z-index: 5; }
         .panel-header { padding: 18px 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 700; font-size: 16px; }
         .mobile-close-btn { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         
@@ -44,10 +46,14 @@
         .chat-input input { flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
         .chat-input button { background: var(--primary); color: white; border: none; padding: 0 18px; border-radius: 8px; margin-left: 10px; cursor: pointer; }
 
-        /* Katman Kontrolü */
-        .layer-control { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; font-size: 12px; font-weight: 600; color: var(--primary); }
-        .layer-control label { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; }
-        .layer-title { font-family: 'Montserrat'; font-weight: 700; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; font-size: 13px;}
+        /* DÜZELTME 2: Açılır Menü (Dropdown) Katman Kontrolü */
+        .layer-control { position: absolute; top: 15px; left: 15px; z-index: 20; font-size: 13px; font-weight: 600; color: var(--primary); }
+        .layer-btn { background: rgba(255,255,255,0.95); padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; gap: 8px; border: 1px solid #e2e8f0; font-family: 'Montserrat'; font-weight: 700; color: var(--primary); transition: 0.2s; }
+        .layer-btn:hover { background: white; border-color: var(--secondary); color: var(--secondary); }
+        .layer-dropdown { display: none; background: rgba(255,255,255,0.95); margin-top: 5px; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; flex-direction: column; gap: 12px; min-width: 180px; }
+        .layer-dropdown.show { display: flex; animation: fadeIn 0.2s ease-in-out; }
+        .layer-dropdown label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 3. PROJE VİTRİNİ & SÜRDÜRÜLEBİLİRLİK */
         .project-showcase { padding: 40px 20px; max-width: 1400px; margin: 0 auto; }
@@ -69,7 +75,6 @@
         .stat-card h3 { font-family: 'Montserrat'; font-size: 36px; color: var(--primary); margin: 0 0 5px 0; font-weight: 800; }
         .stat-card p { color: #666; font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; }
 
-        /* YENİ: LİMAN KIYASLAMA TABLOSU VE GÜMRÜK SEKTÖRÜ */
         .info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; }
         @media (max-width: 1024px) { .info-grid { grid-template-columns: 1fr; } }
         
@@ -77,8 +82,7 @@
         .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         .matrix-table th { padding: 12px; background: #f8fafc; font-family: 'Montserrat'; font-weight: 700; color: var(--primary); border-bottom: 2px solid #cbd5e1; text-transform: uppercase; font-size: 11px; }
         .matrix-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 500; }
-        .matrix-table tr:hover { background: #f8fafc; }
-
+        
         .customs-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; display: flex; flex-direction: column; justify-content: space-between; }
         .customs-btn { width: 100%; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px 15px; border-radius: 8px; color: var(--primary); font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; text-decoration: none; transition: 0.2s; }
         .customs-btn:hover { border-color: var(--secondary); background: rgba(255,102,0,0.02); color: var(--secondary); }
@@ -90,7 +94,7 @@
         .event-list li { padding: 12px 0; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; }
         .event-list li span { background: #e8f4fd; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 11px; }
 
-        /* YENİ: INTERREG AB PROJE KÜNYESİ (ZORUNLU GÖRÜNÜRLÜK) */
+        /* AB GÖRÜNÜRLÜK (KÜNYE) */
         .eu-project-footer { background: #003399; color: white; padding: 30px; border-radius: 16px; margin-top: 20px; display: flex; align-items: center; gap: 30px; box-shadow: 0 10px 30px rgba(0,51,153,0.15); }
         .eu-flag-box { background: white; padding: 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .eu-project-info h5 { font-family: 'Montserrat'; font-size: 16px; margin: 0 0 8px 0; font-weight: 700; color: #fff; }
@@ -128,7 +132,10 @@
             .header { padding: 0 15px; height: 65px; }
             .main-menu { display: none; } 
             .hero-section { flex-direction: column; height: auto; padding: 10px; gap: 10px; }
-            .map-container { height: 55vh; flex-shrink: 0; }
+            
+            /* Mobilde Harita Yüksekliği Düzeltmesi */
+            .map-container { height: 50vh; min-height: 350px; flex-shrink: 0; }
+            
             .chat-panel { position: fixed; left: 0; width: 100%; height: 75vh; bottom: -100%; border-radius: 20px 20px 0 0; z-index: 1000; transition: 0.4s; }
             .chat-panel.mobile-open { bottom: 0; }
             .mobile-close-btn { display: block; } 
@@ -163,14 +170,18 @@
 
     <section class="hero-section">
         <div class="map-container">
-            <div id="map"></div>
             <div class="layer-control">
-                <div class="layer-title"><i class="fas fa-layer-group"></i> Ağ Katmanları</div>
-                <label><input type="checkbox" id="chkLand" onchange="toggleLayers()"> <i class="fas fa-truck" style="color:#ff6600;"></i> Karayolu</label>
-                <label><input type="checkbox" id="chkSea" onchange="toggleLayers()"> <i class="fas fa-ship" style="color:#00509e;"></i> Denizyolu</label>
-                <label><input type="checkbox" id="chkRail" onchange="toggleLayers()"> <i class="fas fa-train" style="color:#27ae60;"></i> Demiryolu</label>
-                <label><input type="checkbox" id="chkAir" onchange="toggleLayers()"> <i class="fas fa-plane" style="color:#8e44ad;"></i> Hava Kargo</label>
+                <button class="layer-btn" onclick="toggleDropdown()">
+                    <i class="fas fa-layer-group"></i> Ağ Katmanları <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="layer-dropdown" id="layerDropdown">
+                    <label><input type="checkbox" id="chkLand" onchange="toggleLayers()"> <i class="fas fa-truck" style="color:#ff6600;"></i> Karayolu Rotaları</label>
+                    <label><input type="checkbox" id="chkSea" onchange="toggleLayers()"> <i class="fas fa-ship" style="color:#00509e;"></i> Denizyolu Hatları</label>
+                    <label><input type="checkbox" id="chkRail" onchange="toggleLayers()"> <i class="fas fa-train" style="color:#27ae60;"></i> Demiryolu Ağı</label>
+                    <label><input type="checkbox" id="chkAir" onchange="toggleLayers()"> <i class="fas fa-plane" style="color:#8e44ad;"></i> Hava Kargo</label>
+                </div>
             </div>
+            <div id="map"></div>
         </div>
 
         <div id="chatPanel" class="chat-panel">
@@ -189,7 +200,6 @@
     </section>
 
     <section class="project-showcase" id="showcase">
-        
         <div class="eco-banner">
             <div class="eco-info">
                 <h3><i class="fas fa-leaf"></i> BSB-LOGINET Yeşil Lojistik & Karbon Ayak İzi Endeksi</h3>
@@ -201,6 +211,7 @@
             </div>
         </div>
 
+        <h2 class="section-title">BSB00959 Proje Etkileşim Panosu</h2>
         <div class="stats-container">
             <div class="stat-card"><i class="fas fa-map-marked-alt"></i><h3 id="count1">0</h3><p>Hedef Ülke (TR, BG, GE)</p></div>
             <div class="stat-card"><i class="fas fa-user-graduate"></i><h3 id="count2">0</h3><p>Genç İstihdam (%50 Kadın)</p></div>
@@ -212,13 +223,7 @@
                 <h4><i class="fas fa-table"></i> Havza Limanları Kapasite ve Altyapı Matrisi</h4>
                 <table class="matrix-table">
                     <thead>
-                        <tr>
-                            <th>Liman Adı</th>
-                            <th>Ülke</th>
-                            <th>Yıllık Kapasite</th>
-                            <th>Maksimum Derinlik (Draft)</th>
-                            <th>Öne Çıkan Yük Türü</th>
-                        </tr>
+                        <tr><th>Liman Adı</th><th>Ülke</th><th>Yıllık Kapasite</th><th>Maksimum Derinlik (Draft)</th><th>Öne Çıkan Yük Türü</th></tr>
                     </thead>
                     <tbody>
                         <tr><td><b>Samsun Limanı</b></td><td>Türkiye</td><td>250,000 TEU</td><td>10.5 Metre</td><td>Konteyner, Ro-Ro, Dökme</td></tr>
@@ -234,7 +239,7 @@
                 <h4><i class="fas fa-camera"></i> Canlı Gümrük ve Geçiş Bağlantıları</h4>
                 <p style="font-size:12px; color:#555; margin-bottom:15px; line-height:1.4;">Sınır kapılarındaki anlık tır sıralarını ve canlı yoğunluk grafiklerini resmi bakanlık ağlarından izleyin:</p>
                 <a href="https://uygulama.gtb.gov.tr/KapiDurum/" target="_blank" class="customs-btn"><span><i class="fas fa-link"></i> Kapıkule Canlı Tır Parkı Durumu</span> <i class="fas fa-chevron-right"></i></a>
-                <a href="https://uygulama.gtb.gov.tr/KapiDurum/" target="_blank" class="customs-btn"><span><i class="fas fa-link"></i> Sarp Kapısı Canlı Yoğunluk Endeksi</span> <i class="fas fa-chevron-right"></i></a>
+                <a href="https://uygulama.gtb.gov.tr/KapiDurum/" target="_blank" class="customs-btn"><span><i class="fas fa-link"></i> Sarp Kapısı Canlı Yoğunluk</span> <i class="fas fa-chevron-right"></i></a>
                 <a href="https://www.samsunport.com.tr/" target="_blank" class="customs-btn"><span><i class="fas fa-anchor"></i> Samsunport Gemi Yanaşma Takvimi</span> <i class="fas fa-chevron-right"></i></a>
             </div>
         </div>
@@ -262,15 +267,12 @@
         </div>
 
         <div class="eu-project-footer">
-            <div class="eu-flag-box">
-                <i class="fas fa-flag-eu" style="color:#003399; font-size:40px;"></i>
-            </div>
+            <div class="eu-flag-box"><i class="fas fa-flag-eu" style="color:#003399; font-size:40px;"></i></div>
             <div class="eu-project-info">
                 <h5>Black Sea Basin Sustainable Logistics and Cooperation Network (BSB-LOGINET)</h5>
                 <p>Bu platform, Avrupa Birliği'nin finansal desteğiyle Interreg NEXT Black Sea Basin Programı kapsamında yürütülmektedir. Proje lideri Samsun Ticaret ve Sanayi Odası (Türkiye), ortakları Varna Ticaret ve Sanayi Odası (Bulgaristan) ve Acara Ticaret ve Sanayi Odası'dır (Gürcistan). Bu yayının içeriğinden tamamen Samsun TSO sorumludur ve hiçbir şekilde Avrupa Birliği'nin görüşlerini yansıttığı değerlendirilemez.</p>
             </div>
         </div>
-
     </section>
 
     <nav class="mobile-nav">
@@ -335,7 +337,6 @@
                 <ul class="lib-list">
                     <li><div><b>Bölgesel Lojistik İhtiyaç Analizi</b><br><span style="color:#777; font-size:11px;">Aktivite 1.1 Çıktısı (Samsun, Varna, Acara)</span></div><a href="#"><i class="fas fa-file-pdf"></i> İndir</a></li>
                     <li><div><b>Yeşil Lojistik Strateji Belgesi</b><br><span style="color:#777; font-size:11px;">Mavi Ekonomi Uygulamaları</span></div><a href="#"><i class="fas fa-file-pdf"></i> İndir</a></li>
-                    <li><div><b>Sınır Ötesi İşbirliği Protokolü</b><br><span style="color:#777; font-size:11px;">SCCI, VCCI, ACCI Ortaklık Anlaşması</span></div><a href="#"><i class="fas fa-file-pdf"></i> İndir</a></li>
                 </ul>
             </div>
         </div>
@@ -380,16 +381,13 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // --- DOĞRULANMIŞ FİRMA VERİLERİ ---
-        const firmsDatabase = [
-            { id: 1, name: "Samsun Global Logistics A.Ş.", country: "TR", type: "Denizyolu", phone: "+90 362 111 2233", email: "ops@samsunglobal.com.tr", cap: "150 Konteyner / Ay Kapasitesi, TİO Belgeli", desc: "Samsun çıkışlı tüm Karadeniz havzası düzenli hat acenteliği.", lanes: ["TR-BG", "TR-GE"] },
-            { id: 2, name: "Karadeniz Transit Express", country: "TR", type: "Karayolu", phone: "+90 362 555 4433", email: "b2b@karadeniztransit.com", cap: "45 Frigo Tır, C2 ve TİO Belgesi", desc: "Samsun-Batum ve İstanbul-Kapıkule-Varna ekspres karayolu taşımacılığı.", lanes: ["TR-GE", "TR-BG"] },
-            { id: 3, name: "Varna Maritime Hub OOD", country: "BG", type: "Denizyolu", phone: "+359 52 666 777", email: "varna@maritimehub.bg", cap: "Köstence ve Samsun Bağlantılı 3 Kargo Gemisi", desc: "Varna Limanı merkezli intermodal yük yönetimi ve gümrükleme.", lanes: ["BG-TR", "BG-GE"] },
-            { id: 4, name: "Batumi Sea Brokerage LLC", country: "GE", type: "Denizyolu", phone: "+995 422 888 999", email: "info@batumibroker.ge", cap: "5000 m² Gümrüklü Antrepo Alanı", desc: "Batum ve Poti limanlarında tahmil, tahliye, depolama ve gümrükleme.", lanes: ["GE-TR", "GE-BG"] }
-        ];
-
-        // --- UX / KONTROLLER ---
+        // --- UX / KONTROLLER VE AÇILIR MENÜ ---
+        function toggleDropdown() {
+            document.getElementById('layerDropdown').classList.toggle('show');
+        }
+        
         function openPanel(id) { if(id==='chatPanel') document.getElementById('chatPanel').classList.add('mobile-open'); }
         function closeChatPanel() { document.getElementById('chatPanel').classList.remove('mobile-open'); }
         function openRouteModal() { document.getElementById('routeModal').classList.add('active'); }
@@ -397,37 +395,34 @@
         function openLibraryModal() { document.getElementById('libraryModal').classList.add('active'); }
         function closeLibraryModal() { document.getElementById('libraryModal').classList.remove('active'); }
         function closeMainModal() { document.getElementById('mainModal').classList.remove('active'); document.getElementById('modalBodyContent').innerHTML='';}
-        function openDirectoryModal() { document.getElementById('directoryModal').classList.add('active'); renderDirectoryList(firmsDatabase); }
         function closeDirectoryModal() { document.getElementById('directoryModal').classList.remove('active'); }
-        
+        function closeCompanyCard() { document.getElementById('companyCardModal').classList.remove('active'); }
+
+        // --- VERİTABANI ---
+        const firmsDatabase = [
+            { id: 1, name: "Samsun Global Logistics A.Ş.", country: "TR", type: "Denizyolu", phone: "+90 362 111 2233", email: "ops@samsunglobal.com.tr", cap: "150 Konteyner / Ay", desc: "Samsun çıkışlı tüm Karadeniz havzası.", lanes: ["TR-BG", "TR-GE"] },
+            { id: 2, name: "Karadeniz Transit Express", country: "TR", type: "Karayolu", phone: "+90 362 555 4433", email: "b2b@karadeniztransit.com", cap: "45 Frigo Tır", desc: "Samsun-Batum ekspres.", lanes: ["TR-GE", "TR-BG"] },
+            { id: 3, name: "Varna Maritime Hub OOD", country: "BG", type: "Denizyolu", phone: "+359 52 666 777", email: "varna@maritimehub.bg", cap: "3 Kargo Gemisi", desc: "Varna Limanı merkezli.", lanes: ["BG-TR", "BG-GE"] }
+        ];
+
+        function openDirectoryModal() { document.getElementById('directoryModal').classList.add('active'); renderDirectoryList(firmsDatabase); }
         function openCompanyCard(id) {
             const firm = firmsDatabase.find(f => f.id === id); if(!firm) return;
             document.getElementById('ccTitle').innerHTML = `<i class="fas fa-building"></i> ${firm.name}`;
-            document.getElementById('ccBody').innerHTML = `
-                <div class="data-card"><span>Faaliyet Alanı</span><strong>${firm.type} Taşımacılığı</strong></div>
-                <div class="data-card"><span>Altyapı / Kapasite</span><strong>${firm.cap}</strong></div>
-                <div class="data-card"><span>Firma Özeti</span><p style="font-size:12px; margin-top:5px; line-height:1.4; color:#555;">${firm.desc}</p></div>
-                <div class="data-card" style="border-left:3px solid var(--secondary);"><span>İletişim</span><strong style="font-size:13px; display:block; margin-top:5px;"><i class="fas fa-phone"></i> ${firm.phone}</strong><strong style="font-size:13px; display:block; margin-top:3px;"><i class="fas fa-envelope"></i> ${firm.email}</strong></div>
-            `;
+            document.getElementById('ccBody').innerHTML = `<div class="data-card"><span>Faaliyet Alanı</span><strong>${firm.type} Taşımacılığı</strong></div><div class="data-card"><span>Altyapı / Kapasite</span><strong>${firm.cap}</strong></div><div class="data-card"><span>İletişim</span><strong style="font-size:13px; display:block; margin-top:5px;"><i class="fas fa-phone"></i> ${firm.phone}</strong><strong style="font-size:13px; display:block; margin-top:3px;"><i class="fas fa-envelope"></i> ${firm.email}</strong></div>`;
             document.getElementById('companyCardModal').classList.add('active');
         }
-        function closeCompanyCard() { document.getElementById('companyCardModal').classList.remove('active'); }
-
         function renderDirectoryList(data) {
             const listDiv = document.getElementById('directoryList'); listDiv.innerHTML = '';
-            if(data.length === 0){ listDiv.innerHTML = '<p style="font-size:13px; color:#666; text-align:center;">Firma bulunamadı.</p>'; return; }
-            data.forEach(f => {
-                listDiv.innerHTML += `<div class="matched-firm-card" onclick="openCompanyCard(${f.id})"><div class="matched-firm-info"><h5>${f.name}</h5><p><i class="fas fa-map-marker-alt"></i> Merkez: ${f.country} | <i class="fas fa-tags"></i> ${f.type}</p></div><i class="fas fa-chevron-right"></i></div>`;
-            });
+            if(data.length === 0){ listDiv.innerHTML = '<p style="text-align:center;">Firma bulunamadı.</p>'; return; }
+            data.forEach(f => { listDiv.innerHTML += `<div class="matched-firm-card" onclick="openCompanyCard(${f.id})"><div class="matched-firm-info"><h5>${f.name}</h5><p><i class="fas fa-map-marker-alt"></i> Merkez: ${f.country} | <i class="fas fa-tags"></i> ${f.type}</p></div><i class="fas fa-chevron-right"></i></div>`; });
         }
         function filterDirectory() {
-            const search = document.getElementById('dirSearch').value.toLowerCase();
-            const country = document.getElementById('dirCountryFilter').value;
-            const filtered = firmsDatabase.filter(f => f.name.toLowerCase().includes(search) && (country === "" || f.country === country));
-            renderDirectoryList(filtered);
+            const search = document.getElementById('dirSearch').value.toLowerCase(); const country = document.getElementById('dirCountryFilter').value;
+            renderDirectoryList(firmsDatabase.filter(f => f.name.toLowerCase().includes(search) && (country === "" || f.country === country)));
         }
 
-        // --- HARİTA ---
+        // --- HARİTA KURULUMU VE DÜZELTİLMİŞ KATMAN MANTIĞI ---
         const bsbExtent = ol.proj.transformExtent([22.0, 40.0, 45.0, 47.0], 'EPSG:4326', 'EPSG:3857');
         const map = new ol.Map({
             target: 'map',
@@ -435,10 +430,16 @@
             view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.5]), zoom: 6, minZoom: 5, maxZoom: 10, extent: bsbExtent })
         });
 
-        // Katmanlar
-        const routeSource = new ol.source.Vector(); const railSource = new ol.source.Vector(); const airSource = new ol.source.Vector();
-        const routeLayer = new ol.layer.Vector({ source: routeSource }); const railLayer = new ol.layer.Vector({ source: railSource }); const airLayer = new ol.layer.Vector({ source: airSource });
-        map.addLayer(routeLayer); map.addLayer(railLayer); map.addLayer(airLayer);
+        // Katmanlar Native Olarak Kapalı Başlatılıyor (visible: false)
+        const landSource = new ol.source.Vector(); const seaSource = new ol.source.Vector();
+        const railSource = new ol.source.Vector(); const airSource = new ol.source.Vector();
+        
+        const landLayer = new ol.layer.Vector({ source: landSource, visible: false });
+        const seaLayer = new ol.layer.Vector({ source: seaSource, visible: false });
+        const railLayer = new ol.layer.Vector({ source: railSource, visible: false });
+        const airLayer = new ol.layer.Vector({ source: airSource, visible: false });
+        
+        map.addLayer(landLayer); map.addLayer(seaLayer); map.addLayer(railLayer); map.addLayer(airLayer);
 
         const landStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#ff6600', width: 3.5, lineDash: [8, 12] }) });
         const seaStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00509e', width: 3.5, lineDash: [10, 15] }) });
@@ -456,35 +457,36 @@
         const railData = [ [[36.33, 41.28], [36.00, 40.50], [32.00, 39.90], [28.97, 41.00], [26.56, 41.67]], [[27.91, 43.21], [23.32, 42.69]] ];
         const airData = [ [[36.55, 41.25], [27.82, 43.23]], [[36.55, 41.25], [41.61, 41.61]] ];
 
-        routesData.forEach(r => { const f = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) }); f.set('type', r.type); routeSource.addFeature(f); });
-        railData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); railSource.addFeature(f); });
-        airData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); airSource.addFeature(f); });
+        // Verileri Stilleriyle Kaynaklara Ekle
+        routesData.forEach(r => { 
+            const f = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) }); 
+            if(r.type === 'land') { f.setStyle(landStyle); landSource.addFeature(f); }
+            else { f.setStyle(seaStyle); seaSource.addFeature(f); }
+        });
+        railData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(railStyle); railSource.addFeature(f); });
+        airData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(airStyle); airSource.addFeature(f); });
 
-        // DİKKAT: Varsaıyalan olarak tüm katmanların gizlenmesi motoru
+        // Checkboxlarla Katman Görünürlüğünü Değiştirme
         function toggleLayers() {
-            const showLand = document.getElementById('chkLand').checked;
-            const showSea = document.getElementById('chkSea').checked;
-            const showRail = document.getElementById('chkRail').checked;
-            const showAir = document.getElementById('chkAir').checked;
-            
-            railSource.getFeatures().forEach(f => f.setStyle(showRail ? railStyle : new ol.style.Style(null)));
-            airSource.getFeatures().forEach(f => f.setStyle(showAir ? airStyle : new ol.style.Style(null)));
-            routeSource.getFeatures().forEach(f => {
-                if(f.get('type') === 'land') f.setStyle(showLand ? landStyle : new ol.style.Style(null));
-                if(f.get('type') === 'sea') f.setStyle(showSea ? seaStyle : new ol.style.Style(null));
-            });
+            landLayer.setVisible(document.getElementById('chkLand').checked);
+            seaLayer.setVisible(document.getElementById('chkSea').checked);
+            railLayer.setVisible(document.getElementById('chkRail').checked);
+            airLayer.setVisible(document.getElementById('chkAir').checked);
         }
 
+        // Animasyon
         let dashOffset = 0;
         function animateFlow() {
             dashOffset -= 0.6;
-            landStyle.getStroke().setLineDashOffset(dashOffset); seaStyle.getStroke().setLineDashOffset(dashOffset / 1.5); railStyle.getStroke().setLineDashOffset(-dashOffset); 
-            routeSource.changed(); railSource.changed();
+            landStyle.getStroke().setLineDashOffset(dashOffset);
+            seaStyle.getStroke().setLineDashOffset(dashOffset / 1.5);
+            railStyle.getStroke().setLineDashOffset(-dashOffset); 
+            landSource.changed(); seaSource.changed(); railSource.changed();
             requestAnimationFrame(animateFlow);
         }
         animateFlow();
 
-        // --- NOKTALAR ---
+        // --- NOKTALAR VE MARINE TRAFFIC ---
         const markerSource = new ol.source.Vector(); map.addLayer(new ol.layer.Vector({ source: markerSource, zIndex: 10 }));
         function addMarker(lon, lat, name, type, meta) {
             const f = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), name: name, type: type, meta: meta, coords: [lat, lon] });
@@ -498,7 +500,6 @@
         addMarker(41.55, 41.52, "Sarp Kapısı", 'border', { cap1: "Normal", cap2: "Müsait", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
         addMarker(26.36, 41.71, "Kapıkule", 'border', { cap1: "Yoğun", cap2: "Dolu", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
 
-        // Tıklama Olayı (MarineTraffic)
         map.on('singleclick', async function(evt) {
             let feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
             if (feature && feature.get('meta')) {
@@ -507,38 +508,32 @@
                 document.getElementById('modalTitle').innerHTML = `<i class="fas ${isPort ? 'fa-ship' : 'fa-truck-moving'}"></i> ${feature.get('name')}`;
                 document.getElementById('modalBodyContent').innerHTML = `<div style="width:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; padding: 40px;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#002b5e; margin-bottom:15px;"></i><b>Veri Taranıyor...</b></div>`;
                 modal.classList.add('active');
-
                 if (isPort) {
-                    document.getElementById('modalBodyContent').innerHTML = `
-                        <div class="modal-left-iframe"><iframe class="mt-frame" src="https://www.marinetraffic.com/en/ais/embed/zoom:13/centery:${lat}/centerx:${lon}/maptype:1/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false"></iframe></div>
-                        <div class="modal-right-data"><div class="data-card"><span>Maksimum Kapasite</span><strong>${m.cap1}</strong></div><div class="data-card"><span>Terminal Derinliği</span><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Resmi Kaynak</a></div>
-                    `;
+                    document.getElementById('modalBodyContent').innerHTML = `<div class="modal-left-iframe"><iframe class="mt-frame" src="https://www.marinetraffic.com/en/ais/embed/zoom:13/centery:${lat}/centerx:${lon}/maptype:1/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false"></iframe></div><div class="modal-right-data"><div class="data-card"><span>Maksimum Kapasite</span><strong>${m.cap1}</strong></div><div class="data-card"><span>Terminal Derinliği</span><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Resmi Kaynak</a></div>`;
                 } else {
-                    document.getElementById('modalBodyContent').innerHTML = `
-                        <div class="modal-right-data" style="width:100%;"><div class="data-card"><span>Gümrük İşlem Süresi</span><strong>${m.cap1}</strong></div><div class="data-card"><span>Tır Parkı Durumu</span><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Canlı Durum Sayfası</a></div>
-                    `;
+                    document.getElementById('modalBodyContent').innerHTML = `<div class="modal-right-data" style="width:100%;"><div class="data-card"><span>Gümrük İşlem Süresi</span><strong>${m.cap1}</strong></div><div class="data-card"><span>Tır Parkı Durumu</span><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Canlı Durum Sayfası</a></div>`;
                 }
             }
         });
 
-        // --- ROTA MOTORU VE FİRMA LİSTELEME ---
+        // --- ROTA MOTORU ---
+        const geoDataDict = { 'TR': [{ id: 'Samsun', name: 'Samsun' }], 'BG': [{ id: 'Varna', name: 'Varna' }], 'GE': [{ id: 'Batum', name: 'Batum' }] };
+        function updateCities(type) {
+            const cCode = document.getElementById(type + 'Country').value; const cSel = document.getElementById(type + 'City'); cSel.innerHTML = '';
+            if (!cCode) { cSel.innerHTML = '<option value="">Önce Ülke</option>'; cSel.disabled = true; return; }
+            cSel.disabled = false; geoDataDict[cCode].forEach(c => { cSel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+        }
         function hesaplaCanliRota() {
             const oCountry = document.getElementById('originCountry').value; const dCountry = document.getElementById('destCountry').value;
             const weight = parseFloat(document.getElementById('cargoWeight').value) || 0;
             if(!oCountry || !dCountry || weight <= 0) { alert("Lütfen alanları doldurun."); return; }
-            
             let co2HTML = weight > 100 ? `<div class="co2-box"><i class="fas fa-leaf" style="color:#22c55e;"></i> Denizyolu Teşviki: ${(weight * 0.015).toFixed(1)} Ton CO2 Salınımı</div>` : `<div class="co2-box" style="border-color:#fca5a5; color:#dc2626; background:#fef2f2;"><i class="fas fa-smog"></i> Karayolu Salınımı: ${(weight * 0.045).toFixed(1)} Ton CO2</div>`;
             const matchedFirms = firmsDatabase.filter(f => f.lanes.includes(`${oCountry}-${dCountry}`) || f.lanes.includes(`${dCountry}-${oCountry}`));
             let firmsListHtml = "";
-            
-            if(matchedFirms.length > 0) {
-                matchedFirms.forEach(firm => {
-                    firmsListHtml += `<div class="matched-firm-card" onclick="openCompanyCard(${firm.id})"><div class="matched-firm-info"><h5>${firm.name}</h5><p><i class="fas fa-tags"></i> ${firm.type} Operatörü</p></div><i class="fas fa-chevron-right" style="color:var(--secondary);"></i></div>`;
-                });
-            } else { firmsListHtml = `<p style="font-size:12px; color:#666; padding:10px;">Bu hatta henüz kayıtlı BSB firması bulunmamaktadır.</p>`; }
-
+            if(matchedFirms.length > 0) { matchedFirms.forEach(firm => { firmsListHtml += `<div class="matched-firm-card" onclick="openCompanyCard(${firm.id})"><div class="matched-firm-info"><h5>${firm.name}</h5><p><i class="fas fa-tags"></i> ${firm.type} Operatörü</p></div><i class="fas fa-chevron-right" style="color:var(--secondary);"></i></div>`; }); } 
+            else { firmsListHtml = `<p style="font-size:12px; color:#666; padding:10px;">Bu hatta kayıtlı firma bulunmamaktadır.</p>`; }
             document.getElementById('routeResult').style.display = 'block';
-            document.getElementById('routeResult').innerHTML = `<b>✓ Optimum Rota Hesaplandı</b><br>${co2HTML}<div class="firm-matches-container"><div class="firm-matches-title"><i class="fas fa-building" style="color:var(--secondary);"></i> Güzergahtaki Kayıtlı BSB Firmaları</div>${firmsListHtml}</div>`;
+            document.getElementById('routeResult').innerHTML = `<b>✓ Optimum Rota Hesaplandı</b><br>${co2HTML}<div class="firm-matches-container"><div class="firm-matches-title"><i class="fas fa-building" style="color:var(--secondary);"></i> Güzergahtaki Firmalar</div>${firmsListHtml}</div>`;
         }
 
         // --- SAYAÇ ANİMASYONLARI ---
@@ -564,18 +559,15 @@
         }
 
         window.onload = () => {
-            // Katmanları ilk açılışta temizle (Talebiniz üzerine varsayılan olarak kapalı kurgulandı)
-            toggleLayers(); 
-            
             animateIntCounter("count1", 0, 3, 2000); animateIntCounter("count2", 0, 50, 2000); animateIntCounter("count3", 0, 6, 2000);
             animateCO2Counter("co2Counter", 0, 1425.8, 3000);
         };
 
-        // --- CHATBOT ASİSTAN ---
+        // --- CHATBOT ---
         function mesajGonder() {
             const input = document.getElementById('userInput'); const box = document.getElementById('chatBox'); if(!input.value) return;
             box.innerHTML += `<div class="chat-msg user">${input.value}</div>`; input.value = ""; box.scrollTop = box.scrollHeight;
-            setTimeout(() => { box.innerHTML += `<div class="chat-msg system">Mevzuat bilgi portalları taranıyor...</div>`; box.scrollTop = box.scrollHeight; }, 800);
+            setTimeout(() => { box.innerHTML += `<div class="chat-msg system">Sistem taranıyor...</div>`; box.scrollTop = box.scrollHeight; }, 800);
         }
     </script>
 </body>
