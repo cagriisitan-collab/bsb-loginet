@@ -2,17 +2,17 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BSB-LOGINET | Karadeniz Lojistik</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; }
-        /* Menü Tasarımı */
         .navbar { background-color: #003366; padding: 15px 20px; color: white; display: flex; gap: 20px; }
         .navbar a { color: white; text-decoration: none; font-weight: bold; }
-        /* Harita Alanı */
-        #map { height: 500px; width: 100%; }
         .content { padding: 20px; }
         .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #map { height: 500px; width: 100%; margin-top: 15px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
@@ -26,13 +26,14 @@
     <div class="content">
         <div class="box">
             <h2>Karadeniz Lojistik Ağı</h2>
+            <p>Samsun, Varna ve Batum rotaları.</p>
             <div id="map"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // Harita kurulumu
+        // Harita Başlatma
         const map = new ol.Map({
             target: 'map',
             layers: [
@@ -41,7 +42,7 @@
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([36.0, 42.5]),
+                center: ol.proj.fromLonLat([36.0, 42.5]), // Samsun merkezi bazlı koordinat
                 zoom: 6
             })
         });
