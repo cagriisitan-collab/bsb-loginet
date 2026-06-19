@@ -3,244 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSB-LOGINET | Stratejik Lojistik ve Ticaret Portalı</title>
+    <title>BSB-LOGINET | Mega İstihbarat ve Lojistik Portalı</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap');
         
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Open Sans', sans-serif; overflow: hidden; background: #eef2f5; }
         
-        /* Tam Ekran Harita */
         #map { height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* Aydınlık Cam Tasarım (Light Glassmorphism) */
         .glass-panel {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 10px 30px rgba(0, 40, 85, 0.1);
-            z-index: 10;
-            color: #333;
-            border-radius: 16px;
+            position: absolute; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 15px 35px rgba(0, 40, 85, 0.15); z-index: 10; border-radius: 16px; transition: all 0.3s ease;
         }
 
-        /* ÜST CANLI METRİK BARI */
-        .top-bar { top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 30px; padding: 12px 30px; border-radius: 50px; }
-        .metric { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #003366; }
-        .metric i { font-size: 16px; color: #ff6600; }
-        .metric span { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; }
+        /* Üst Bar */
+        .top-bar { top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; padding: 12px 40px; border-radius: 50px; z-index: 20; }
+        .metric { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: #003366; }
+        .metric i { font-size: 18px; color: #ff6600; }
+        .metric span { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; }
+        .metric.pulse-text span { animation: pulseText 2s infinite; color: #27ae60; }
 
-        /* SOL MENÜ (Operasyon Navigasyonu) */
-        .sidebar { top: 20px; left: 20px; bottom: 20px; width: 300px; display: flex; flex-direction: column; overflow: hidden; }
-        .logo-area { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); background: linear-gradient(135deg, #003366, #00509e); color: white; border-radius: 16px 16px 0 0; }
-        .logo-area h1 { font-family: 'Montserrat', sans-serif; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 1px; }
-        .logo-area p { margin: 5px 0 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; }
+        @keyframes pulseText { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        /* Sol Menü */
+        .sidebar { top: 20px; left: 20px; bottom: 20px; width: 320px; display: flex; flex-direction: column; overflow: hidden; z-index: 20; }
+        .logo-area { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); background: linear-gradient(135deg, #001f3f, #00509e); color: white; border-radius: 16px 16px 0 0; position: relative; overflow: hidden; }
+        .logo-area::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10%); background-size: 10px 10px; opacity: 0.3; animation: moveBg 20s linear infinite; }
+        @keyframes moveBg { 0% { transform: translate(0,0); } 100% { transform: translate(50px, 50px); } }
+        .logo-area h1 { font-family: 'Montserrat', sans-serif; margin: 0; font-size: 28px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .logo-area p { margin: 5px 0 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: #ff9900; }
         
-        .nav-menu { padding: 15px 10px; flex-grow: 1; overflow-y: auto; }
-        .nav-category { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; margin: 15px 0 5px 15px; }
-        .nav-menu a { display: flex; align-items: center; padding: 12px 15px; color: #444; text-decoration: none; font-weight: 600; transition: 0.2s; font-size: 13px; border-radius: 8px; margin-bottom: 5px; }
-        .nav-menu a i { width: 24px; text-align: center; color: #00509e; font-size: 15px; margin-right: 10px; }
-        .nav-menu a:hover { background: #f0f4f8; color: #003366; transform: translateX(5px); }
+        .nav-menu { padding: 20px 15px; flex-grow: 1; overflow-y: auto; }
+        .nav-category { font-size: 11px; color: #999; text-transform: uppercase; font-weight: 800; margin: 20px 0 10px 10px; letter-spacing: 1px; }
+        .nav-menu a { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; color: #333; text-decoration: none; font-weight: 600; transition: 0.3s; font-size: 13px; border-radius: 10px; margin-bottom: 8px; border: 1px solid transparent; }
+        .nav-menu a .icon-text { display: flex; align-items: center; }
+        .nav-menu a i.main-icon { width: 30px; text-align: center; color: #00509e; font-size: 16px; }
+        .nav-menu a:hover { background: #fff; color: #ff6600; border-color: rgba(0,80,158,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transform: translateY(-2px); }
 
-        /* SAĞ ALT (GTİP ve Pazar Analiz Asistanı) */
-        .chat-panel { bottom: 20px; right: 20px; width: 380px; display: flex; flex-direction: column; }
-        .chat-header { background: #fff; padding: 15px 20px; font-family: 'Montserrat', sans-serif; color: #003366; font-size: 16px; font-weight: 700; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
-        .chat-header .status { font-size: 11px; color: #27ae60; display: flex; align-items: center; gap: 5px; }
-        .chat-header .status i { font-size: 8px; }
-        .chat-box { height: 220px; overflow-y: auto; padding: 15px; font-size: 13px; background: #f8fafc; }
-        .chat-msg { margin-bottom: 12px; padding: 12px; border-radius: 10px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .chat-msg.system { background: #fff; border-left: 4px solid #ff6600; color: #444; }
-        .chat-msg.user { background: #00509e; color: #fff; text-align: right; margin-left: 20px; border-bottom-right-radius: 0; }
+        /* Sağ Alt Asistan */
+        .chat-panel { bottom: 20px; right: 20px; width: 400px; display: flex; flex-direction: column; z-index: 20; }
+        .chat-header { background: #fff; padding: 15px 20px; font-family: 'Montserrat', sans-serif; color: #001f3f; font-size: 16px; font-weight: 800; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
+        .chat-header .status { font-size: 11px; color: #27ae60; background: rgba(39,174,96,0.1); padding: 4px 10px; border-radius: 20px; font-weight: 600; }
+        .chat-box { height: 250px; overflow-y: auto; padding: 20px; font-size: 13px; background: #f8fafc; }
+        .chat-msg { margin-bottom: 15px; padding: 12px 15px; border-radius: 12px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+        .chat-msg.system { background: #fff; border-left: 4px solid #ff6600; color: #333; }
+        .chat-msg.user { background: linear-gradient(135deg, #00509e, #003366); color: #fff; text-align: right; margin-left: 30px; border-bottom-right-radius: 0; }
         
-        /* Hızlı Butonlar */
-        .quick-actions { display: flex; gap: 5px; padding: 10px 15px; background: #fff; border-top: 1px solid #eee; overflow-x: auto; }
-        .quick-actions button { white-space: nowrap; padding: 6px 12px; background: #f0f4f8; border: 1px solid #d1d9e6; border-radius: 20px; font-size: 11px; font-weight: 600; color: #003366; cursor: pointer; transition: 0.2s; }
-        .quick-actions button:hover { background: #003366; color: #fff; }
-
         .chat-input { display: flex; padding: 15px; background: #fff; border-radius: 0 0 16px 16px; }
-        .chat-input input { flex-grow: 1; padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; color: #333; outline: none; font-family: 'Open Sans'; transition: 0.3s; }
-        .chat-input input:focus { border-color: #00509e; box-shadow: 0 0 0 3px rgba(0,80,158,0.1); }
-        .chat-input button { background: #ff6600; color: #fff; border: none; width: 45px; border-radius: 8px; margin-left: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .chat-input button:hover { background: #e65c00; transform: scale(1.05); }
+        .chat-input input { flex-grow: 1; padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; background: #f8fafc; outline: none; font-family: 'Open Sans'; font-weight: 500; transition: 0.3s; }
+        .chat-input input:focus { border-color: #00509e; background: #fff; }
+        .chat-input button { background: #ff6600; color: #fff; border: none; width: 50px; border-radius: 10px; margin-left: 10px; cursor: pointer; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 10px rgba(255,102,0,0.3); }
+        .chat-input button:hover { background: #001f3f; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,31,63,0.3); }
 
-        /* Tıklama Bilgi Ekranı (Popup) - Açık Tema */
-        .ol-popup { position: absolute; background: white; border: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); padding: 20px; border-radius: 12px; color: #333; bottom: 20px; left: -125px; width: 250px; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 100; }
-        .ol-popup.show { opacity: 1; }
-        .ol-popup:after { top: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-top-color: white; border-width: 10px; margin-left: -10px; }
-        .popup-title { font-family: 'Montserrat'; font-size: 16px; color: #003366; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee; font-weight: 700; display: flex; justify-content: space-between; }
-        .popup-title i { color: #ff6600; }
-        .popup-desc { font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 10px; }
-        .popup-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; font-size: 11px; }
-        .popup-stats div { display: flex; flex-direction: column; }
-        .popup-stats strong { color: #00509e; font-size: 13px; }
+        /* Mükemmelleştirilmiş Popup */
+        .ol-popup { position: absolute; background: white; border: none; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); padding: 0; border-radius: 16px; color: #333; bottom: 30px; left: -140px; width: 280px; pointer-events: none; opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; transform: translateY(10px); overflow: hidden; }
+        .ol-popup.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .ol-popup:after { top: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-top-color: white; border-width: 12px; margin-left: -12px; }
+        .popup-header { background: #001f3f; color: white; padding: 15px 20px; font-family: 'Montserrat'; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .popup-header i { color: #ff6600; font-size: 18px; }
+        .popup-body { padding: 20px; }
+        .popup-desc { font-size: 12.5px; color: #555; line-height: 1.6; margin-bottom: 15px; }
+        .popup-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-box { background: #f0f4f8; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #e2e8f0; }
+        .stat-box span { display: block; font-size: 10px; color: #777; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+        .stat-box strong { color: #00509e; font-size: 14px; font-family: 'Montserrat'; font-weight: 800; }
+        .weather-tag { display: inline-block; background: #e8f4fd; color: #00509e; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-top: 10px; border: 1px solid #bce0fd; }
+        .weather-tag.warning { background: #fff0eb; color: #e65c00; border-color: #ffd1b3; }
 
-        /* Harita Üzeri Ekstra İkonlar */
-        .map-badge { background: #ff6600; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; position: absolute; top: -25px; left: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        /* SAMSUN RADAR EFEKTİ (Sihirli Dokunuş 1) */
+        .radar-container { position: absolute; width: 120px; height: 120px; transform: translate(-50%, -50%); pointer-events: none; z-index: 5; }
+        .radar-sweep { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, transparent 70%, rgba(255, 102, 0, 0.6) 100%); animation: radarSpin 3s linear infinite; border: 1px solid rgba(255,102,0,0.3); }
+        .radar-ping { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: #ff6600; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px #ff6600; }
+        @keyframes radarSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="map"></div>
     
+    <div id="samsun-radar" class="radar-container" style="display:none;">
+        <div class="radar-sweep"></div>
+        <div class="radar-ping"></div>
+    </div>
+
     <div id="popup" class="ol-popup">
         <div id="popup-content"></div>
     </div>
 
     <div class="glass-panel top-bar">
-        <div class="metric"><i class="fas fa-ship"></i> Aktif Deniz Seferi: <span>124</span></div>
-        <div class="metric"><i class="fas fa-truck-moving"></i> Tır Trafiği (E70): <span>Yoğun</span></div>
-        <div class="metric"><i class="fas fa-chart-pie"></i> Hedef Pazar Eşleşmesi: <span>%87</span></div>
+        <div class="metric"><i class="fas fa-satellite-dish"></i> BSB-LOGINET Aktif: <span>Mart 2026'dan Beri</span></div>
+        <div class="metric pulse-text"><i class="fas fa-radar"></i> Tarama Alanı: <span>Karadeniz Havzası</span></div>
+        <div class="metric"><i class="fas fa-route"></i> Kargo Sinyali: <span>14 Aktif</span></div>
     </div>
 
     <div class="glass-panel sidebar">
         <div class="logo-area">
             <h1>BSB-LOGINET</h1>
-            <p>Küresel Ticaret Ağı</p>
+            <p>Dış Ticaret & İstihbarat</p>
         </div>
         
         <div class="nav-menu">
-            <div class="nav-category">Ağ İzleme</div>
-            <a href="#"><i class="fas fa-route"></i> Lojistik Koridorlar</a>
-            <a href="#"><i class="fas fa-anchor"></i> Liman Kapasiteleri</a>
+            <div class="nav-category">Stratejik Hedefleme</div>
+            <a href="#"><div class="icon-text"><i class="fas fa-barcode main-icon"></i> GTİP Pazar Analizi</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
+            <a href="#"><div class="icon-text"><i class="fas fa-bullseye main-icon"></i> Potansiyel Alıcı Tespiti</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
+            <a href="#"><div class="icon-text"><i class="fas fa-network-wired main-icon"></i> EEN İşbirlikleri</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
             
-            <div class="nav-category">Ticari İstihbarat</div>
-            <a href="#"><i class="fas fa-barcode"></i> GTİP Pazar Analizi</a>
-            <a href="#"><i class="fas fa-handshake"></i> Potansiyel Alıcı Tespiti</a>
-            <a href="#"><i class="fas fa-globe-europe"></i> EEN Bağlantı Noktaları</a>
-            
-            <div class="nav-category">Sistem</div>
-            <a href="#"><i class="fas fa-file-invoice"></i> Gümrük Belgeleri</a>
-            <a href="#"><i class="fas fa-user-tie"></i> Uzman Girişi</a>
+            <div class="nav-category">Lojistik Operasyon</div>
+            <a href="#"><div class="icon-text"><i class="fas fa-ship main-icon"></i> Liman Yoğunlukları</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
+            <a href="#"><div class="icon-text"><i class="fas fa-truck main-icon"></i> Sınır Kapısı Süreleri</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
+            <a href="#"><div class="icon-text"><i class="fas fa-file-contract main-icon"></i> Gümrük Mevzuatı</div><i class="fas fa-chevron-right" style="font-size:10px; color:#ccc;"></i></a>
         </div>
     </div>
 
     <div class="glass-panel chat-panel">
         <div class="chat-header">
-            <span><i class="fas fa-laptop-code"></i> Dış Ticaret Asistanı</span>
-            <div class="status"><i class="fas fa-circle fa-beat"></i> Çevrimiçi</div>
+            <span><i class="fas fa-brain" style="margin-right:8px; color:#ff6600;"></i> Ticari İstihbarat YZ</span>
+            <div class="status"><i class="fas fa-circle fa-fade"></i> Çevrimiçi</div>
         </div>
         <div class="chat-box" id="chatBox">
             <div class="chat-msg system">
-                <b>Sistem:</b> Karadeniz havzası hedef pazar veri tabanı senkronize edildi. Hangi ürün (GTİP) veya bölge için analiz yapmak istersiniz?
+                <b>Sistem:</b> Karadeniz liman ve gümrük veri ağları senkronize edildi. İstihbarat veya GTİP sorgusu girebilirsiniz.
             </div>
         </div>
-        <div class="quick-actions">
-            <button onclick="hizliSorgu('8708 GTİP Analizi')">8708 Analizi</button>
-            <button onclick="hizliSorgu('Varna Liman Durumu')">Varna Durumu</button>
-            <button onclick="hizliSorgu('Sarp Kapısı Yoğunluk')">Sarp Yoğunluk</button>
-        </div>
         <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Sorgu girin...">
+            <input type="text" id="userInput" placeholder="Örn: 8708 Tır Geçişleri...">
             <button onclick="mesajGonder()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // AYDINLIK ve DETAYLI Harita (Carto Voyager)
+        // Harita: Carto Voyager (Temiz, Profesyonel)
         const map = new ol.Map({
             target: 'map',
             layers: [
                 new ol.layer.Tile({
-                    source: new ol.source.XYZ({
-                        url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                        attributions: '© CartoDB'
-                    })
+                    source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', attributions: '© CartoDB' })
                 })
             ],
-            view: new ol.View({ center: ol.proj.fromLonLat([34.5, 42.5]), zoom: 6.5 })
+            view: new ol.View({ center: ol.proj.fromLonLat([34.5, 42.5]), zoom: 6.7 })
         });
 
         const vectorSource = new ol.source.Vector();
+        const signalSource = new ol.source.Vector(); // Hareketli kargolar için ayrı katman
 
-        // --- ROTA STİLLERİ (Açık Tema İçin Yeniden Renklendirildi) ---
-        let dashOffsetLand = 0;
-        let dashOffsetSea = 0;
+        // --- ROTALAR ---
+        let dashOffsetLand = 0; let dashOffsetSea = 0;
+        const landStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#ff6600', width: 4, lineDash: [10, 15] }) });
+        const seaStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00509e', width: 4, lineDash: [12, 18] }) });
 
-        const landStyle = new ol.style.Style({
-            stroke: new ol.style.Stroke({ color: '#e67e22', width: 3.5, lineDash: [8, 12] })
-        });
-
-        const seaStyle = new ol.style.Style({
-            stroke: new ol.style.Stroke({ color: '#00509e', width: 3.5, lineDash: [10, 15] })
-        });
+        const routes = []; // Animasyonlu noktalar için koordinatları saklayacağız
 
         function createRoute(coords, isLand) {
-            const feature = new ol.Feature({ geometry: new ol.geom.LineString(coords.map(c => ol.proj.fromLonLat(c))) });
+            const transformedCoords = coords.map(c => ol.proj.fromLonLat(c));
+            const feature = new ol.Feature({ geometry: new ol.geom.LineString(transformedCoords) });
             feature.setStyle(isLand ? landStyle : seaStyle);
             vectorSource.addFeature(feature);
+            routes.push({ coords: transformedCoords, isLand: isLand });
         }
 
-        // E-Karayolları
-        createRoute([[36.33, 41.28], [37.28, 41.13], [39.72, 41.00], [41.55, 41.52], [41.63, 41.61], [44.82, 41.71]], true); // Samsun-Sarp
-        createRoute([[36.33, 41.28], [32.19, 40.80], [29.00, 41.05], [26.36, 41.71]], true); // Samsun-Kapıkule
-        createRoute([[26.36, 41.71], [24.74, 42.15], [27.91, 43.21], [28.65, 44.15]], true); // Avrupa Bağlantısı
+        createRoute([[36.33, 41.28], [37.28, 41.13], [39.72, 41.00], [41.55, 41.52], [41.63, 41.61], [44.82, 41.71]], true); 
+        createRoute([[36.33, 41.28], [32.19, 40.80], [29.00, 41.05], [26.36, 41.71]], true); 
+        createRoute([[26.36, 41.71], [24.74, 42.15], [27.91, 43.21], [28.65, 44.15]], true); 
+        createRoute([[36.33, 41.28], [37.75, 44.71]], false); 
+        createRoute([[36.33, 41.28], [30.73, 46.48]], false); 
+        createRoute([[28.97, 41.00], [27.91, 43.21], [28.65, 44.15], [30.73, 46.48]], false); 
 
-        // Deniz Yolları
-        createRoute([[36.33, 41.28], [37.75, 44.71]], false); // Samsun-Novorossiysk
-        createRoute([[36.33, 41.28], [30.73, 46.48]], false); // Samsun-Odessa
-        createRoute([[28.97, 41.00], [27.91, 43.21], [28.65, 44.15], [30.73, 46.48]], false); // Batı Karadeniz Hattı
-
-        // --- NOKTALAR, ETİKETLER VE DETAYLI POPUP VERİLERİ ---
-        function addMarker(lon, lat, name, type, badge, desc, volume, transit) {
-            let color = type === 'port' ? '#00509e' : type === 'hub' ? '#27ae60' : '#e67e22';
+        // --- NOKTALAR ---
+        function addMarker(lon, lat, name, type, desc, vol, transit, weather) {
+            let color = type === 'port' ? '#00509e' : type === 'hub' ? '#ff6600' : '#d93025';
+            let icon = type === 'port' ? 'fa-anchor' : type === 'hub' ? 'fa-building' : 'fa-truck';
+            
             const feature = new ol.Feature({ 
                 geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
-                name: name, iconStr: type === 'port' ? 'fa-anchor' : type === 'hub' ? 'fa-building' : 'fa-truck-loading',
-                desc: desc, volume: volume, transit: transit
+                name: name, iconStr: icon, desc: desc, vol: vol, transit: transit, weather: weather, isWarning: weather.includes('Fırtına') || weather.includes('Yoğunluk')
             });
             
-            // Marker Noktası
             feature.setStyle(new ol.style.Style({
                 image: new ol.style.Circle({ radius: 8, fill: new ol.style.Fill({color: color}), stroke: new ol.style.Stroke({color: '#fff', width: 3}) }),
-                text: new ol.style.Text({ 
-                    text: name + (badge ? ' ('+badge+')' : ''), 
-                    offsetY: -18, font: 'bold 13px "Montserrat", sans-serif', 
-                    fill: new ol.style.Fill({color: '#003366'}), 
-                    stroke: new ol.style.Stroke({color: '#fff', width: 4}) 
-                })
+                text: new ol.style.Text({ text: name, offsetY: -20, font: 'bold 14px "Montserrat", sans-serif', fill: new ol.style.Fill({color: '#001f3f'}), stroke: new ol.style.Stroke({color: '#fff', width: 5}) })
             }));
             vectorSource.addFeature(feature);
-            
-            // Pulse Efekti (Arka Plan Halkası)
-            if(type === 'port' || type === 'hub') {
-                const pulse = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])) });
-                pulse.setStyle(new ol.style.Style({
-                    image: new ol.style.Circle({ radius: 20, fill: new ol.style.Fill({color: color + '33'}), stroke: new ol.style.Stroke({color: color + '88', width: 1}) })
-                }));
-                vectorSource.addFeature(pulse);
-            }
         }
 
-        addMarker(36.33, 41.28, "Samsun Limanı", 'port', "Merkez", "Karadeniz'in en stratejik çıkış noktası. EEN ağı ana terminali.", "250K TEU", "-");
-        addMarker(27.91, 43.21, "Varna", 'port', "AB", "Bulgaristan varışlı potansiyel alıcı dağıtım üssü.", "180K TEU", "2 Gün");
-        addMarker(41.63, 41.61, "Batum", 'port', null, "Kafkasya hedef pazarları için aktarma limanı.", "90K TEU", "1 Gün");
-        addMarker(36.45, 41.15, "Samsun Lojistik Köyü", 'hub', null, "Intermodal taşımacılık ve depolama kompleksi.", "Tam Kapasite", "0 Saat");
-        addMarker(41.55, 41.52, "Sarp", 'border', null, "Gürcistan transit geçişleri. Gümrük veri entegrasyonu aktif.", "2500 Tır/Gün", "Bekleme: 3s");
-        addMarker(26.36, 41.71, "Kapıkule", 'border', null, "Avrupa ana ihraç kapısı. GTİP sorguları bu hat üzerinden analiz edilir.", "4000 Tır/Gün", "Bekleme: 8s");
+        addMarker(36.33, 41.28, "Samsun Lojistik Üssü", 'hub', "EEN Karadeniz Ana Terminali. GTİP bazlı çıkışların merkez dağıtım noktası.", "350K Ton/Ay", "Sıfır", "Rüzgar: 12km/s - Açık");
+        addMarker(27.91, 43.21, "Varna Limanı", 'port', "Bulgaristan ve Romanya pazarlarına denizden giriş kapısı.", "180K TEU", "1 Gün", "Rüzgar: 45km/s - Fırtına Riski");
+        addMarker(41.63, 41.61, "Batum", 'port', "Kafkasya hedef pazarları için Ro-Ro ve konteyner aktarma hattı.", "90K TEU", "12 Saat", "Dalga: 0.5m - Uygun");
+        addMarker(41.55, 41.52, "Sarp Kapısı", 'border', "Gürcistan gümrük geçişleri. Canlı veri entegrasyonu aktif.", "2500 Tır/Gün", "Bekleme: 3 Saat", "Hava Temiz");
+        addMarker(26.36, 41.71, "Kapıkule", 'border', "Avrupa ihracat ana damarı. İstihbarat raporlarına göre en yoğun hat.", "4000 Tır/Gün", "Bekleme: 8 Saat", "Gümrük Yoğunluğu");
 
         map.addLayer(new ol.layer.Vector({ source: vectorSource }));
+        map.addLayer(new ol.layer.Vector({ source: signalSource })); // Sinyal Katmanı
 
-        // CANLI AKIŞ ANİMASYONU
+        // --- SİHİRLİ DOKUNUŞ 1: SAMSUN RADARI ---
+        const samsunCoord = ol.proj.fromLonLat([36.33, 41.28]);
+        const radarElement = document.getElementById('samsun-radar');
+        radarElement.style.display = 'block';
+        const radarOverlay = new ol.Overlay({ element: radarElement, position: samsunCoord, positioning: 'center-center', stopEvent: false });
+        map.addOverlay(radarOverlay);
+
+        // --- SİHİRLİ DOKUNUŞ 2: HAREKET EDEN KARGO SİNYALLERİ ---
+        let time = 0;
         function animateFlow() {
-            dashOffsetLand -= 0.6;
-            dashOffsetSea -= 0.4;
+            dashOffsetLand -= 0.8; dashOffsetSea -= 0.5;
             landStyle.getStroke().setLineDashOffset(dashOffsetLand);
             seaStyle.getStroke().setLineDashOffset(dashOffsetSea);
             vectorSource.changed();
+
+            // Rotalar üzerinde ilerleyen noktalar (Kargolar)
+            signalSource.clear();
+            time += 0.005; // İlerleme hızı
+            
+            routes.forEach(route => {
+                const geom = new ol.geom.LineString(route.coords);
+                const fraction = (time + (route.coords[0][0] % 1)) % 1; // Her rotaya farklı başlangıç zamanı
+                const coord = geom.getCoordinateAt(fraction);
+                
+                const signal = new ol.Feature({ geometry: new ol.geom.Point(coord) });
+                signal.setStyle(new ol.style.Style({
+                    image: new ol.style.Circle({ 
+                        radius: 5, fill: new ol.style.Fill({color: route.isLand ? '#fff' : '#00ffcc'}), 
+                        stroke: new ol.style.Stroke({color: route.isLand ? '#ff6600' : '#00509e', width: 2}) 
+                    })
+                }));
+                signalSource.addFeature(signal);
+            });
+
             requestAnimationFrame(animateFlow);
         }
         animateFlow();
 
-        // TIKLAMA (POPUP) BÜYÜSÜ
+        // --- POPUP MOTORU ---
         const popupElement = document.getElementById('popup');
         const content = document.getElementById('popup-content');
-        const overlay = new ol.Overlay({ element: popupElement, positioning: 'bottom-center', stopEvent: false, offset: [0, -15] });
+        const overlay = new ol.Overlay({ element: popupElement, positioning: 'bottom-center', stopEvent: true, offset: [0, -25] });
         map.addOverlay(overlay);
 
         map.on('singleclick', function(evt) {
@@ -248,12 +248,16 @@
             map.forEachFeatureAtPixel(evt.pixel, function(feature) {
                 if (feature.get('desc') && !found) {
                     found = true;
+                    const isWarn = feature.get('isWarning');
                     content.innerHTML = `
-                        <div class="popup-title"><i class="fas ${feature.get('iconStr')}"></i> ${feature.get('name')}</div>
-                        <div class="popup-desc">${feature.get('desc')}</div>
-                        <div class="popup-stats">
-                            <div><span>Hacim</span><strong>${feature.get('volume')}</strong></div>
-                            <div><span>Transit/Bekleme</span><strong>${feature.get('transit')}</strong></div>
+                        <div class="popup-header"><i class="fas ${feature.get('iconStr')}"></i> ${feature.get('name')}</div>
+                        <div class="popup-body">
+                            <div class="popup-desc">${feature.get('desc')}</div>
+                            <div class="popup-stats">
+                                <div class="stat-box"><span>Hacim / Kapasite</span><strong>${feature.get('vol')}</strong></div>
+                                <div class="stat-box"><span>Transit / Bekleme</span><strong>${feature.get('transit')}</strong></div>
+                            </div>
+                            <div class="weather-tag ${isWarn ? 'warning' : ''}"><i class="fas ${isWarn ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> Operasyon Şartı: ${feature.get('weather')}</div>
                         </div>
                     `;
                     overlay.setPosition(feature.getGeometry().getCoordinates());
@@ -268,26 +272,17 @@
             map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent)) ? 'pointer' : '';
         });
 
-        // ASİSTAN MANTIĞI
-        function hizliSorgu(metin) {
-            document.getElementById('userInput').value = metin;
-            mesajGonder();
-        }
-
+        // --- ASİSTAN ---
         function mesajGonder() {
             const input = document.getElementById('userInput');
             const box = document.getElementById('chatBox');
             if(!input.value) return;
-            
             box.innerHTML += `<div class="chat-msg user">${input.value}</div>`;
-            let sorgu = input.value;
-            input.value = "";
-            box.scrollTop = box.scrollHeight;
-
+            let s = input.value; input.value = ""; box.scrollTop = box.scrollHeight;
             setTimeout(() => {
-                box.innerHTML += `<div class="chat-msg system"><b>Analiz:</b> "${sorgu}" işlemi için EEN veri tabanı ve gümrük kayıtları taranıyor. Potansiyel alıcı ve rekabet raporu ekrana yansıtılacak.</div>`;
+                box.innerHTML += `<div class="chat-msg system"><b>İstihbarat Paneli:</b> "${s}" parametresi onaylandı. EEN kayıtları ve GTİP hedef pazar matrisi çekiliyor... Raporunuz hazırlanacak.</div>`;
                 box.scrollTop = box.scrollHeight;
-            }, 800);
+            }, 1000);
         }
         document.getElementById("userInput").addEventListener("keypress", e => { if (e.key === "Enter") { e.preventDefault(); mesajGonder(); } });
     </script>
