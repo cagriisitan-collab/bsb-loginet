@@ -2,55 +2,197 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>BSB-LOGINET | Stratejik Lojistik Ağı</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSB-LOGINET | Karadeniz İstihbarat ve Lojistik Ağı</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
+    
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; }
-        #map { height: 100vh; width: 100vw; }
-        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 15px; border-radius: 5px; font-family: sans-serif; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f4f8; color: #333; }
+        
+        /* Menü */
+        .navbar { background-color: #002855; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .navbar-links { display: flex; gap: 20px; }
+        .navbar a { color: #ffffff; text-decoration: none; font-weight: 600; font-size: 15px; transition: color 0.3s; }
+        .navbar a:hover { color: #ff9900; }
+        
+        /* Ana İçerik */
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+        .box { background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px; }
+        h2 { margin-top: 0; color: #002855; font-size: 20px; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
+        
+        /* Harita */
+        #map { height: 65vh; width: 100%; border-radius: 6px; border: 1px solid #d1d9e6; background-color: #e5e3df; }
+        
+        /* Chatbot */
+        .chat-container { display: flex; flex-direction: column; gap: 10px; }
+        .chat-box { height: 200px; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px; overflow-y: auto; background-color: #fafbfc; font-size: 14px; }
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input-area input { flex-grow: 1; padding: 12px; border: 1px solid #d1d9e6; border-radius: 6px; outline: none; }
+        .chat-input-area button { padding: 12px 25px; background-color: #ff9900; color: #000; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        .chat-input-area button:hover { background-color: #e68a00; color: white; }
+        
+        /* Harita Lejantı (Gösterge) */
+        .legend { display: flex; gap: 15px; margin-bottom: 10px; font-size: 13px; font-weight: bold; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body>
-    <div class="overlay">
-        <h2 style="margin:0; color:#003366;">BSB-LOGINET</h2>
-        <p style="margin:5px 0 0 0; font-size:14px;">Gerçek Lojistik Koridorları</p>
+
+    <div class="navbar">
+        <div class="navbar-links">
+            <a href="#">Ana Sayfa</a>
+            <a href="#">BSB-LOGINET Projesi</a>
+            <a href="#">Dış Ticaret Verileri</a>
+            <a href="#">Ulaşım Haritaları</a>
+        </div>
+        <div>
+            <a href="#" style="background: #ff9900; color: #000; padding: 8px 15px; border-radius: 4px;">Ortak Girişi</a>
+        </div>
     </div>
-    <div id="map"></div>
+
+    <div class="container">
+        <div class="box">
+            <h2>Karadeniz Havzası Lojistik Koridorları</h2>
+            
+            <div class="legend">
+                <div class="legend-item"><span class="dot" style="background:#00509e;"></span> Limanlar</div>
+                <div class="legend-item"><span class="dot" style="background:#d93025;"></span> Lojistik Merkezler</div>
+                <div class="legend-item"><span class="dot" style="background:#f4b400;"></span> Sınır Kapıları</div>
+                <div class="legend-item"><span style="width: 20px; height: 3px; background:#00509e; display:inline-block;"></span> Deniz Rotası</div>
+                <div class="legend-item"><span style="width: 20px; height: 3px; border-bottom: 2px dashed #e67e22; display:inline-block;"></span> Kara Rotası</div>
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+        <div class="box">
+            <h2>🤖 Gümrük ve Mevzuat Danışmanı</h2>
+            <div class="chat-container">
+                <div class="chat-box" id="chatBox">
+                    <div style="color: #555; margin-bottom: 10px;"><strong>Sistem:</strong> BSB-LOGINET Asistanına hoş geldiniz. Karadeniz havzasındaki gümrük prosedürleri, GTİP sorgulamaları ve lojistik veriler hakkında sorularınızı sorabilirsiniz.</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="userInput" placeholder="Örn: Bulgaristan Dereköy sınır kapısındaki güncel bekleme prosedürleri nelerdir?">
+                    <button onclick="mesajGonder()">Sorgula</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
         const map = new ol.Map({
             target: 'map',
             layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
-            view: new ol.View({ center: ol.proj.fromLonLat([36.0, 42.5]), zoom: 6 })
+            view: new ol.View({ center: ol.proj.fromLonLat([34.0, 43.5]), zoom: 6.2 })
         });
 
         const vectorSource = new ol.source.Vector();
 
-        // Rota ekleme fonksiyonu (Gerçekçi eğriler için çok noktalı)
-        function addRoute(coords, color, width, dash) {
-            const line = new ol.Feature({
-                geometry: new ol.geom.LineString(coords.map(c => ol.proj.fromLonLat(c)))
-            });
+        // Nokta Ekleme Fonksiyonu (Etiketleriyle beraber)
+        function addMarker(lon, lat, name, type) {
+            let color = '#00509e'; // Liman
+            let radius = 7;
+            if(type === 'logistics') { color = '#d93025'; radius = 8; } // Lojistik
+            if(type === 'border') { color = '#f4b400'; radius = 6; } // Sınır Kapısı
+
+            const feature = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])) });
+            feature.setStyle(new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: radius,
+                    fill: new ol.style.Fill({color: color}),
+                    stroke: new ol.style.Stroke({color: 'white', width: 2})
+                }),
+                text: new ol.style.Text({
+                    text: name,
+                    offsetY: -15,
+                    font: 'bold 12px "Segoe UI", sans-serif',
+                    fill: new ol.style.Fill({color: '#111'}),
+                    stroke: new ol.style.Stroke({color: '#fff', width: 3})
+                })
+            }));
+            vectorSource.addFeature(feature);
+        }
+
+        // Rota Ekleme Fonksiyonu
+        function addRoute(coords, type) {
+            const line = new ol.Feature({ geometry: new ol.geom.LineString(coords.map(c => ol.proj.fromLonLat(c))) });
+            
+            const color = type === 'sea' ? '#00509e' : '#e67e22';
+            const width = type === 'sea' ? 3 : 2.5;
+            const dash = type === 'sea' ? null : [8, 8];
+
             line.setStyle(new ol.style.Style({
                 stroke: new ol.style.Stroke({ color: color, width: width, lineDash: dash })
             }));
             vectorSource.addFeature(line);
         }
 
-        // 1. DENİZ ROTASI (Gerçekçi kavisli rotalar)
-        // Samsun-Varna (Karadeniz orta hat)
-        addRoute([[36.33, 41.28], [33.0, 42.5], [27.91, 43.21]], '#003366', 4, null); 
-        // Samsun-Batum (Kıyıya paralel)
-        addRoute([[36.33, 41.28], [39.0, 41.2], [41.63, 41.61]], '#003366', 4, null);
+        /* 1. LİMANLAR (Mavi) */
+        addMarker(36.33, 41.28, "Samsun Limanı", 'port');
+        addMarker(27.91, 43.21, "Varna Limanı", 'port');
+        addMarker(41.63, 41.61, "Batum Limanı", 'port');
+        addMarker(28.65, 44.15, "Köstence", 'port');
+        addMarker(30.73, 46.48, "Odessa", 'port');
+        addMarker(37.75, 44.71, "Novorossiysk", 'port');
+        addMarker(28.97, 41.00, "İstanbul Limanları", 'port');
 
-        // 2. KARAYOLU (E-Yolları rotasını izleyen gerçekçi hatlar)
-        // Samsun -> Sarp (Sahil Yolu E70)
-        addRoute([[36.33, 41.28], [38.0, 41.0], [40.0, 40.9], [41.5, 41.5]], '#ff9900', 3, [5, 5]);
-        // Samsun -> Dereköy (İstanbul bağlantılı hat)
-        addRoute([[36.33, 41.28], [32.0, 41.0], [29.0, 41.0], [27.5, 42.2]], '#ff9900', 3, [5, 5]);
+        /* 2. LOJİSTİK MERKEZLER (Kırmızı) */
+        addMarker(36.45, 41.15, "Samsun Lojistik Köyü", 'logistics');
+        addMarker(44.82, 41.71, "Tiflis", 'logistics');
+        addMarker(24.74, 42.15, "Filibe (Plovdiv)", 'logistics');
+
+        /* 3. SINIR KAPILARI (Sarı) */
+        addMarker(41.55, 41.52, "Sarp", 'border');
+        addMarker(27.46, 41.96, "Dereköy", 'border');
+        addMarker(26.36, 41.71, "Kapıkule", 'border');
+
+        /* 4. GERÇEK DENİZ ROTALARI */
+        // Samsun-Novorossiysk
+        addRoute([[36.33, 41.28], [37.0, 43.0], [37.75, 44.71]], 'sea');
+        // Samsun-Odessa
+        addRoute([[36.33, 41.28], [34.0, 44.0], [30.73, 46.48]], 'sea');
+        // İstanbul-Varna-Köstence-Odessa
+        addRoute([[28.97, 41.00], [29.5, 42.0], [27.91, 43.21], [28.65, 44.15], [30.73, 46.48]], 'sea');
+        // Samsun-Batum
+        addRoute([[36.33, 41.28], [39.0, 41.5], [41.63, 41.61]], 'sea');
+        // Novorossiysk-Batum
+        addRoute([[37.75, 44.71], [39.0, 43.5], [41.63, 41.61]], 'sea');
+
+        /* 5. GERÇEK KARA ROTALARI (E-Yolları) */
+        // E70 Sahil Yolu (Samsun-Sarp-Batum-Tiflis)
+        addRoute([[36.33, 41.28], [37.8, 41.1], [39.7, 41.0], [40.5, 40.9], [41.55, 41.52], [41.63, 41.61], [42.0, 42.0], [44.82, 41.71]], 'land');
+        // E80/E87 (Samsun-İstanbul-Kapıkule-Filibe)
+        addRoute([[36.33, 41.28], [35.0, 41.0], [32.0, 40.8], [28.97, 41.00], [27.46, 41.2], [26.36, 41.71], [24.74, 42.15]], 'land');
+        // Varna-Köstence Karayolu
+        addRoute([[27.91, 43.21], [28.0, 43.5], [28.65, 44.15]], 'land');
 
         map.addLayer(new ol.layer.Vector({ source: vectorSource }));
+
+        // Chatbot Basit İşlev
+        function mesajGonder() {
+            const input = document.getElementById('userInput');
+            const box = document.getElementById('chatBox');
+            if(!input.value) return;
+            
+            box.innerHTML += `<div style="margin-bottom:8px;"><strong>Siz:</strong> ${input.value}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                box.innerHTML += `<div style="color: #00509e; margin-bottom:8px; padding-left: 10px; border-left: 3px solid #ff9900;">
+                                  <strong>Asistan:</strong> Analiz ediliyor... (API entegrasyonu sağlandığında detaylı gümrük verisi buraya yansıtılacaktır.)
+                                  </div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 800);
+        }
+
+        // Enter tuşu ile mesaj gönderme
+        document.getElementById("userInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { event.preventDefault(); mesajGonder(); }
+        });
     </script>
 </body>
 </html>
