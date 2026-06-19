@@ -4,239 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BSB-LOGINET | Karadeniz Lojistik Portalı</title>
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f6;
-            color: #333;
-        }
-        
-        /* Üst Menü Tasarımı */
-        .navbar {
-            background-color: #003366; 
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .navbar a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 16px 20px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .navbar a:hover { background-color: #00509e; color: white; }
-        .navbar-right { float: right; }
-
-        /* Ana İçerik ve Harita Alanı Tasarımı */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; }
+        .navbar { background-color: #003366; padding: 15px 20px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .navbar a { color: white; padding: 10px 15px; text-decoration: none; font-weight: bold; }
         .content { padding: 40px 20px; text-align: center; }
-        
-        .box-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            max-width: 1000px;
-            margin: 0 auto 40px auto;
-        }
-        
-        #map {
-            height: 400px; 
-            width: 100%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-top: 15px;
-        }
-        
-        h2 { color: #003366; margin-bottom: 5px; }
-        p { color: #666; font-size: 16px; margin-top: 0; margin-bottom: 20px; }
-
-        /* YAPAY ZEKA SOHBET ARAYÜZÜ TASARIMI */
-        .chat-box {
-            height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .chat-message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            max-width: 80%;
-            line-height: 1.5;
-        }
-        .bot-message {
-            background-color: #e6f2ff;
-            border-left: 4px solid #003366;
-            display: block;
-        }
-        .user-message {
-            background-color: #d1ffd6;
-            border-right: 4px solid #28a745;
-            display: block;
-            text-align: right;
-            margin-left: auto;
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input-area input {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        .chat-input-area button {
-            padding: 12px 25px;
-            background-color: #ff9900;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .chat-input-area button:hover { background-color: #e68a00; }
+        .box-container { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 1000px; margin: 0 auto 40px auto; }
+        #map { height: 400px; width: 100%; border-radius: 5px; border: 1px solid #ccc; margin-top: 15px; }
+        .chat-box { height: 300px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; overflow-y: auto; background-color: #f9f9f9; margin-bottom: 15px; text-align: left; }
+        .chat-message { margin-bottom: 15px; padding: 10px 15px; border-radius: 8px; max-width: 80%; }
+        .bot-message { background-color: #e6f2ff; border-left: 4px solid #003366; }
+        .user-message { background-color: #d1ffd6; border-right: 4px solid #28a745; text-align: right; margin-left: auto; }
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input-area input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
+        .chat-input-area button { padding: 12px 25px; background-color: #ff9900; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="navbar">
         <a href="#">Ana Sayfa</a>
-        <a href="#">Proje Hakkında</a>
-        <a href="#">Kaynak Kütüphanesi</a>
         <a href="#map-section">Ulaşım Haritaları</a>
-        
-        <div class="navbar-right">
-            <a href="#ai-section" style="background-color: #ff9900; color: #000;">🤖 Yapay Zeka Botu</a>
-            <a href="#">Ortak Girişi (Varna/Batum)</a>
-        </div>
+        <a href="#ai-section">🤖 Yapay Zeka Botu</a>
     </div>
 
     <div class="content">
-        
         <div class="box-container" id="map-section">
             <h2>Karadeniz Lojistik Ağı</h2>
-            <p>Samsun, Varna ve Batum arasındaki sınır ötesi ulaşım ve ticaret rotaları.</p>
             <div id="map"></div>
         </div>
 
         <div class="box-container" id="ai-section">
-            <h2>🤖 Mevzuat ve Gümrük Danışmanı (Yapay Zeka)</h2>
-            <p>Karadeniz bölgesindeki gümrük prosedürleri, yeşil lojistik ve sınır ötesi düzenlemeler hakkında sorularınızı sorun.</p>
-            
+            <h2>🤖 Gümrük Danışmanı</h2>
             <div class="chat-box" id="chatBox">
-                <div class="chat-message bot-message">
-                    <strong>Sistem:</strong> Merhaba! Lojistik portalı yapay zeka asistanına hoş geldiniz. 3 ülkenin gümrük prosedürleriyle ilgili size nasıl yardımcı olabilirim?
-                </div>
+                <div class="chat-message bot-message"><strong>Sistem:</strong> Merhaba! Karadeniz lojistik ağı asistanına hoş geldiniz.</div>
             </div>
-            
             <div class="chat-input-area">
-                <input type="text" id="userInput" placeholder="Örn: Bulgaristan gümrüklerinde aranan yeşil lojistik standartları nelerdir?" onkeypress="klavyeKontrol(event)">
+                <input type="text" id="userInput" placeholder="Sorunuzu yazın..." onkeypress="klavyeKontrol(event)">
                 <button onclick="mesajGonder()">Sorgula</button>
             </div>
         </div>
-
     </div>
 
-/* 1. HARİTA İŞLEMLERİ */
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Harita Başlatma
         var map = L.map('map').setView([42.5, 36.0], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        // Limanlar
         var limanlar = L.layerGroup([
             L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>'),
             L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>'),
             L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>')
         ]).addTo(map);
 
-        // Lojistik Merkezleri ve Sınır Kapıları
         var noktalar = L.layerGroup([
-            // Lojistik Merkezleri
             L.circleMarker([41.15, 36.20], {color: 'red', radius: 6}).bindPopup('<b>Samsun Lojistik Köyü</b>'),
-            // Sınır Kapıları (Özel İkon veya Renk)
-            L.marker([41.52, 41.53], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Sarp Sınır Kapısı</b><br>TR-GE Geçiş Noktası'),
-            L.marker([42.22, 27.50], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Dereköy Sınır Kapısı</b><br>TR-BG Geçiş Noktası'),
-            L.marker([41.20, 27.35], {icon: L.divIcon({className: 'custom-border', html: '🛂'})}).bindPopup('<b>Hamzabeyli Sınır Kapısı</b><br>TR-BG Alternatif')
+            L.marker([41.52, 41.53]).bindPopup('<b>Sarp Sınır Kapısı</b>')
         ]).addTo(map);
 
-        // Rotalar
-        var denizYolu = L.polyline([[[41.2867, 36.33], [43.2141, 27.9147]], [[41.2867, 36.33], [41.6168, 41.6367]]], {color: 'blue', weight: 4});
-        var karaYolu = L.polyline([[43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367]], {color: 'red', weight: 3, dashArray: '10, 10'});
+        L.control.layers(null, { "Limanlar": limanlar, "Lojistik Merkezleri": noktalar }).addTo(map);
 
-        // Katmanlar
-        var overlayMaps = {
-            "Limanlar": limanlar,
-            "Lojistik Merkezleri & Kapılar": noktalar,
-            "Deniz Rotaları": denizYolu.addTo(map),
-            "Kara Yolu": karaYolu.addTo(map)
-        };
-        L.control.layers(null, overlayMaps).addTo(map);
-
-        /* 2. YAPAY ZEKA (SİMÜLASYON) İŞLEMLERİ */
-        function mesajGonder() {
-            var input = document.getElementById('userInput');
-            var mesaj = input.value;
-            if(mesaj.trim() === "") return;
-            
-            var chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML += '<div class="chat-message user-message"><strong>Siz:</strong> ' + mesaj + '</div>';
-            input.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            setTimeout(function() {
-                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> Bu bir görsel arayüz testidir. API entegrasyonu tamamlandığında gümrük verileri burada listelenecektir.</div>';
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
-        }
-
-        function klavyeKontrol(event) {
-            if (event.key === "Enter") {
-                mesajGonder();
-            }
-        }
-
-        /* 2. YAPAY ZEKA (SİMÜLASYON) İŞLEMLERİ */
-        function mesajGonder() {
-            var input = document.getElementById('userInput');
-            var mesaj = input.value;
-            if(mesaj.trim() === "") return; // Boş mesajı engelle
-            
-            var chatBox = document.getElementById('chatBox');
-            
-            // Kullanıcının yazdığı mesajı ekrana basıyoruz
-            chatBox.innerHTML += '<div class="chat-message user-message"><strong>Siz:</strong> ' + mesaj + '</div>';
-            input.value = ""; // Kutuyu temizle
-            chatBox.scrollTop = chatBox.scrollHeight; // Ekranı aşağı kaydır
-            
-            // Botun cevap verme simülasyonu (1.5 saniye gecikmeli)
-            setTimeout(function() {
-                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> Bu şu an bir görsel arayüz testidir. İlerleyen aşamalarda bu kısma entegre edilecek API ile sorduğunuz sorulara gümrük mevzuatları veri tabanından gerçek cevaplar verilecektir.</div>';
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1500);
-        }
-
-        /* YAPAY ZEKA (API) İŞLEMLERİ */
+        // Sohbet Fonksiyonu (Tek ve temiz hali)
         async function mesajGonder() {
             var input = document.getElementById('userInput');
             var mesaj = input.value;
@@ -244,40 +74,16 @@
             
             var chatBox = document.getElementById('chatBox');
             chatBox.innerHTML += '<div class="chat-message user-message"><strong>Siz:</strong> ' + mesaj + '</div>';
-            input.value = ""; 
-            chatBox.scrollTop = chatBox.scrollHeight;
+            input.value = "";
             
-            try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer Test'
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o",
-                        messages: [
-                            {role: "system", content: "Sen bir Karadeniz bölgesi lojistik ve gümrük uzmanısın."},
-                            {role: "user", content: mesaj}
-                        ]
-                    })
-                });
-
-                const data = await response.json();
-                const botCevabi = data.choices[0].message.content;
-                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> ' + botCevabi + '</div>';
-            } catch (error) {
-                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Hata:</strong> API bağlantısı sağlanamadı. Lütfen internetinizi ve anahtarınızı kontrol edin.</div>';
-            }
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Simülasyon cevabı (API kısmını daha sonra güvenli bir şekilde ekleyeceğiz)
+            setTimeout(() => {
+                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> Şu an geliştirme modundayız. Harita ve arayüzünüz başarıyla çalışıyor!</div>';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
         }
 
-        function klavyeKontrol(event) {
-            if (event.key === "Enter") {
-                mesajGonder();
-            }
-        }
-            
+        function klavyeKontrol(event) { if (event.key === "Enter") mesajGonder(); }
     </script>
 </body>
 </html>
