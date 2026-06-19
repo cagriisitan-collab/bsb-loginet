@@ -1,65 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <meta charset="utf-8">
-    <title>BSB-LOGINET | Lojistik Ağı</title>
-    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
-    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>BSB-LOGINET | Stratejik Lojistik</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
     <style>
-        body { margin: 0; padding: 0; }
+        body { margin: 0; padding: 0; font-family: sans-serif; }
         #map { width: 100vw; height: 100vh; }
-        /* Harita üzerindeki basit panel */
-        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1; background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-family: sans-serif; }
+        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
     <div class="overlay">
-        <h2 style="margin:0; color:#003366;">BSB-LOGINET</h2>
-        <p>Karadeniz Lojistik Strateji Haritası</p>
+        <h2 style="color: #003366; margin: 0;">BSB-LOGINET</h2>
+        <p>Karadeniz Lojistik Ağı</p>
     </div>
     <div id="map"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // Açık renkli (Light) harita stili (CartoDB Positron)
-        const map = new maplibregl.Map({
-            container: 'map',
-            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-            center: [36.0, 42.5],
-            zoom: 6
-        });
-
-        const deck = new deck.DeckGL({
-            container: 'map',
-            map: map,
+        // Harita kurulumu
+        const map = new ol.Map({
+            target: 'map',
             layers: [
-                // Rotalar - Klasik kurumsal mavi tonlarda
-                new deck.ArcLayer({
-                    id: 'rotalar',
-                    data: [
-                        { source: [36.33, 41.2867], target: [27.9147, 43.2141] }, // Samsun-Varna
-                        { source: [36.33, 41.2867], target: [41.6367, 41.6168] }  // Samsun-Batum
-                    ],
-                    getSourcePosition: d => d.source,
-                    getTargetPosition: d => d.target,
-                    getSourceColor: [0, 51, 102], // Kurumsal Koyu Mavi
-                    getTargetColor: [0, 51, 102],
-                    getWidth: 3
-                }),
-                // Liman Noktaları
-                new deck.ScatterplotLayer({
-                    id: 'limanlar',
-                    data: [
-                        { position: [36.33, 41.2867], name: "Samsun" },
-                        { position: [27.9147, 43.2141], name: "Varna" },
-                        { position: [41.6367, 41.6168], name: "Batum" }
-                    ],
-                    getPosition: d => d.position,
-                    getFillColor: [255, 153, 0], // Kurumsal Turuncu
-                    getRadius: 5000,
-                    pickable: true
-                })
-            ]
+                new ol.layer.Tile({ source: new ol.source.OSM() })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([36.0, 42.5]),
+                zoom: 6
+            })
         });
     </script>
 </body>
