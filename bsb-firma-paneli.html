@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSB-LOGINET | Firma Portalı ve İlan Ağı</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+        
+        :root { 
+            --sidebar-bg: #ffffff; 
+            --main-bg: #f4f7f9;
+            --primary: #003366;
+            --secondary: #ff6600;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--main-bg); display: flex; height: 100vh; overflow: hidden; color: var(--text-dark); }
+
+        /* --- GİRİŞ / KAYIT EKRANI (OVERLAY) --- */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,51,102,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: 0.5s; }
+        .login-box { background: white; width: 400px; padding: 40px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; }
+        .login-box h2 { font-family: 'Montserrat'; color: var(--primary); margin-bottom: 20px; font-weight: 800; }
+        .login-box h2 span { color: var(--secondary); }
+        .login-input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Inter'; outline: none; }
+        .login-btn { width: 100%; background: var(--secondary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Montserrat'; }
+        .login-btn:hover { background: var(--primary); }
+        .login-links { margin-top: 15px; font-size: 13px; color: var(--text-light); }
+        .login-links a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+
+        /* --- 1. SIDEBAR (AYDINLIK TEMA) --- */
+        .sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+        .sidebar-header { height: 75px; display: flex; align-items: center; padding: 0 25px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-family: 'Montserrat'; font-size: 20px; font-weight: 800; color: var(--primary); }
+        .sidebar-header h2 span { color: var(--secondary); }
+        
+        .nav-menu { padding: 20px 15px; flex-grow: 1; overflow-y: auto; }
+        .nav-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin: 15px 0 10px 10px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #475569; text-decoration: none; font-weight: 600; border-radius: 8px; transition: 0.2s; margin-bottom: 5px; cursor: pointer; }
+        .nav-item i { width: 20px; text-align: center; font-size: 16px; color: #94a3b8; }
+        .nav-item:hover { background: #f1f5f9; color: var(--primary); }
+        .nav-item:hover i { color: var(--primary); }
+        .nav-item.active { background: rgba(0,51,102,0.05); color: var(--primary); }
+        .nav-item.active i { color: var(--secondary); }
+        
+        .user-profile { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: #f8fafc; cursor: pointer; transition: 0.2s; }
+        .user-profile:hover { background: #f1f5f9; }
+        .avatar { width: 40px; height: 40px; border-radius: 8px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Montserrat'; }
+        .user-info div { font-size: 13px; font-weight: 700; color: var(--primary); }
+        .user-info span { font-size: 11px; color: var(--text-light); }
+
+        /* --- 2. ANA İÇERİK --- */
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .topbar { height: 75px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .page-title { font-family: 'Montserrat'; font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .btn-add { background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Inter'; box-shadow: 0 4px 10px rgba(255,102,0,0.2); transition: 0.2s; }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255,102,0,0.3); }
+
+        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
+
+        /* --- İLAN KARTLARI (YÜK/ARAÇ PANOSU) --- */
+        .board-filters { display: flex; gap: 15px; margin-bottom: 20px; }
+        .filter-btn { padding: 8px 16px; border: 1px solid var(--border); background: white; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-light); transition: 0.2s; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .filter-btn:hover:not(.active) { background: #f1f5f9; }
+
+        .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        
+        .listing-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; transition: 0.2s; }
+        .listing-card:hover { border-color: #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.05); transform: translateY(-3px); }
+        
+        .listing-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
+        .route-info { display: flex; align-items: center; gap: 10px; font-family: 'Montserrat'; font-weight: 700; font-size: 16px; color: var(--primary); }
+        .route-info i { color: #cbd5e1; font-size: 12px; }
+        
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-vehicle { background: #eef2ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+        .badge-cargo { background: #fefce8; color: #d97706; border: 1px solid #fde68a; }
+
+        .listing-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 13px; color: #475569; }
+        .detail-item { display: flex; align-items: center; gap: 8px; }
+        .detail-item i { color: var(--secondary); width: 14px; text-align: center; }
+        .detail-desc { font-size: 13px; color: #64748b; line-height: 1.5; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+
+        .listing-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .company-info { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text-dark); }
+        .company-logo { width: 24px; height: 24px; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; }
+        
+        .btn-msg { background: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-msg:hover { background: var(--primary); color: white; }
+
+        /* --- TOAST BİLDİRİMİ --- */
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #10b981; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; transform: translateX(150%); transition: 0.4s; z-index: 1000; }
+        .toast.show { transform: translateX(0); }
+
+        /* --- MODAL (İLAN VEYA MESAJ) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: white; width: 500px; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow: hidden; transform: translateY(20px); transition: 0.3s; }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--primary); font-family: 'Montserrat'; }
+        .modal-body { padding: 20px; }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>BSB<span>LOGINET</span></h2>
+            <p style="color:#64748b; font-size:14px; margin-bottom:25px;">Firma Ağına Katılın</p>
+            <input type="email" class="login-input" placeholder="Kurumsal E-posta Adresi" value="info@firma.com">
+            <input type="password" class="login-input" placeholder="Şifre" value="123456">
+            <button class="login-btn" onclick="document.getElementById('loginOverlay').style.display='none'">Sisteme Giriş Yap</button>
+            <div class="login-links">
+                Hesabınız yok mu? <a href="#">Firma Kaydı Oluştur</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOL SİDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>BSB<span>LOGINET</span></h2>
+        </div>
+        
+        <div class="user-profile">
+            <div class="avatar">F</div>
+            <div class="user-info">
+                <div>Örnek Lojistik A.Ş.</div>
+                <span>Samsun, TR</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-label">Firma Yönetimi</div>
+            <a class="nav-item"><i class="fas fa-building"></i> Firma Profilim</a>
+            <a class="nav-item"><i class="fas fa-box-open"></i> Hizmet & Kapasite Bilgileri</a>
+            
+            <div class="nav-label">Ticaret Ağı</div>
+            <a class="nav-item active"><i class="fas fa-clipboard-list"></i> Araç & Yük İlan Panosu</a>
+            <a class="nav-item"><i class="fas fa-address-book"></i> Bölgesel Firma Rehberi</a>
+            
+            <div class="nav-label">İletişim</div>
+            <a class="nav-item"><i class="fas fa-envelope"></i> Gelen Mesajlar <span style="background:var(--secondary); color:white; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:auto;">2</span></a>
+            <a class="nav-item"><i class="fas fa-bell"></i> Bildirim Ayarları</a>
+        </div>
+    </div>
+
+    <!-- ANA ALAN -->
+    <div class="main-wrapper">
+        <!-- Üst Bar -->
+        <div class="topbar">
+            <div class="page-title"><i class="fas fa-clipboard-list" style="color:var(--secondary);"></i> Lojistik İlan Panosu</div>
+            <button class="btn-add" onclick="openNewListing()"><i class="fas fa-plus"></i> Yeni İlan Gir</button>
+        </div>
+
+        <!-- İçerik -->
+        <div class="content-area">
+            
+            <div class="board-filters">
+                <button class="filter-btn active">Tüm İlanlar</button>
+                <button class="filter-btn">Sadece Boş Araçlar (Dönüş)</button>
+                <button class="filter-btn">Sadece Yükler</button>
+                <div style="margin-left:auto; display:flex; gap:10px;">
+                    <select class="login-input" style="margin:0; padding:8px; width:auto; border-radius:20px; font-size:12px;">
+                        <option>Sırala: En Yeni</option>
+                        <option>Sırala: Acil</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="listing-grid">
+                <!-- İLAN 1 (Kullanıcının Verdiği Örnek) -->
+                <div class="listing-card">
+                    <div class="listing-header">
+                        <div class="route-info">Samsun <i class="fas fa-arrow-right"></i> Batum</div>
+                        <span class="badge badge-vehicle">Boş Araç (Dönüş)</span>
+                    </div>
+                    <div class="listing-details">
+                        <div class="detail-item"><i class="fas fa-calendar-alt"></i> 18 Haziran 2026</div>
+                        <div class="detail-item"><i class="fas fa-truck"></i> Standart Tenteli</div>
+                        <div class="detail-item"><i class="fas fa-weight-hanging"></i> 2 Ton Müsait</div>
+                        <div class="detail-item"><i class="fas fa-ruler-combined"></i> 10 m³ Alan</div>
+                    </div>
+                    <div class="detail-desc">
+                        Aracımız Batum'a teslimat yaptıktan sonra boş dönecektir. Yol üzeri (Sarp, Trabzon, Rize vb.) parsiyel veya tam yük alınabilir. 
+                    </div>
+                    <div class="listing-footer">
+                        <div class="company-info"><div class="company-logo">KA</div> Karadeniz Nakliyat</div>
+                        <button class="btn-msg" onclick="openMessageModal('Karadeniz Nakliyat')"><i class="fas fa-paper-plane"></i> Mesaj At</button>
+                    </div>
+                </div>
+
+                <!-- İLAN 2 -->
+                <div class="listing-card">
+                    <div class="listing-header">
+                        <div class="route-info">Varna <i class="fas fa-arrow-right"></i> İstanbul</div>
+                        <span class="badge badge-cargo">Yük (İhracat)</span>
+                    </div>
+                    <div class="listing-details">
+                        <div class="detail-item"><i class="fas fa-calendar-alt"></i> 20-22 Haziran</div>
+                        <div class="detail-item"><i class="fas fa-box"></i> Paletli Genel Kargo</div>
+                        <div class="detail-item"><i class="fas fa-weight-hanging"></i> 12 Ton</div>
+                        <div class="detail-item"><i class="fas fa-truck-loading"></i> Gümrüklü Antrepo</div>
+                    </div>
+                    <div class="detail-desc">
+                        Varna Limanı arkasındaki antrepodan alınarak İstanbul Ambarlı tesislerine teslim edilecek 14 palet genel ticari ürün.
+                    </div>
+                    <div class="listing-footer">
+                        <div class="company-info"><div class="company-logo">BG</div> Varna Trade Ltd.</div>
+                        <button class="btn-msg" onclick="openMessageModal('Varna Trade Ltd.')"><i class="fas fa-paper-plane"></i> Mesaj At</button>
+                    </div>
+                </div>
+
+                <!-- İLAN 3 -->
+                <div class="listing-card">
+                    <div class="listing-header">
+                        <div class="route-info">Batum <i class="fas fa-arrow-right"></i> Samsun</div>
+                        <span class="badge badge-cargo">Acil Yük</span>
+                    </div>
+                    <div class="listing-details">
+                        <div class="detail-item"><i class="fas fa-calendar-alt"></i> Hemen Çıkışlı</div>
+                        <div class="detail-item"><i class="fas fa-snowflake"></i> Frigo (Isı Kontrollü)</div>
+                        <div class="detail-item"><i class="fas fa-weight-hanging"></i> 5 Ton</div>
+                        <div class="detail-item"><i class="fas fa-temperature-low"></i> +4°C Koruma</div>
+                    </div>
+                    <div class="detail-desc">
+                        Gıda ürünleri için frigo araç aranmaktadır. Acara serbest bölgesinden yükleme yapılacaktır. İlgilenen firmaların acil dönüş yapması rica olunur.
+                    </div>
+                    <div class="listing-footer">
+                        <div class="company-info"><div class="company-logo">AJ</div> Ajara Foods Export</div>
+                        <button class="btn-msg" onclick="openMessageModal('Ajara Foods Export')"><i class="fas fa-paper-plane"></i> Mesaj At</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MESAJ GÖNDERME MODALI -->
+    <div class="modal-overlay" id="msgModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div><i class="fas fa-envelope" style="margin-right:8px;"></i> <span id="msgFirmName">Firma</span>'ya Mesaj Gönder</div>
+                <button style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;" onclick="closeModal('msgModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px; color:#64748b; margin-bottom:15px;">
+                    Mesajınız, firmanın sisteme kayıtlı olan resmi e-posta adresine anlık bildirim olarak iletilecektir.
+                </p>
+                <div class="form-group">
+                    <label>Konu</label>
+                    <input type="text" class="login-input" value="Samsun-Batum İlanınız Hakkında" id="msgSubject">
+                </div>
+                <div class="form-group">
+                    <label>Mesajınız</label>
+                    <textarea class="login-input form-control" placeholder="Teklifinizi veya sorunuzu yazın..."></textarea>
+                </div>
+                <button class="login-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Güvenli Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YENİ İLAN MODALI -->
+    <div class="modal-overlay" id="newListingModal">
+        <div class="modal-box" style="width: 600px;">
+            <div class="modal-header">
+                <div><i class="fas fa-plus-circle" style="margin-right:8px;"></i> Yeni Araç / Yük İlanı</div>
+                <button style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;" onclick="closeModal('newListingModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:15px; margin-bottom:15px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>İlan Türü</label>
+                        <select class="login-input"><option>Boş Araç (Dönüş/Kapasite)</option><option>Yük (Nakliyeci Aranıyor)</option></select>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Tarih</label>
+                        <input type="date" class="login-input">
+                    </div>
+                </div>
+                <div style="display:flex; gap:15px; margin-bottom:15px;">
+                    <div class="form-group" style="flex:1;"><label>Çıkış Yeri</label><input type="text" class="login-input" placeholder="Örn: Samsun"></div>
+                    <div class="form-group" style="flex:1;"><label>Varış Yeri</label><input type="text" class="login-input" placeholder="Örn: Batum"></div>
+                </div>
+                <div style="display:flex; gap:15px; margin-bottom:15px;">
+                    <div class="form-group" style="flex:1;"><label>Boş Hacim (m³)</label><input type="text" class="login-input" placeholder="Örn: 10"></div>
+                    <div class="form-group" style="flex:1;"><label>Boş Ağırlık (Ton)</label><input type="text" class="login-input" placeholder="Örn: 2"></div>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama Detayları</label>
+                    <textarea class="login-input form-control" style="min-height: 80px;" placeholder="Dönüş yolunda alınabilecek yükler, özel şartlar vs..."></textarea>
+                </div>
+                <button class="login-btn"><i class="fas fa-check"></i> İlanı Yayınla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST (BİLDİRİM) -->
+    <div class="toast" id="toastMsg">
+        <i class="fas fa-check-circle" style="font-size:20px;"></i>
+        <div>Mesajınız başarıyla iletildi.<br><span style="font-size:11px; font-weight:400;">Firmanın kayıtlı e-posta adresine anında bildirim gönderildi.</span></div>
+    </div>
+
+    <script>
+        function openMessageModal(firmName) {
+            document.getElementById('msgFirmName').innerText = firmName;
+            document.getElementById('msgSubject').value = "İlanınız Hakkında";
+            document.getElementById('msgModal').classList.add('active');
+        }
+
+        function openNewListing() {
+            document.getElementById('newListingModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function sendMessage() {
+            closeModal('msgModal');
+            let toast = document.getElementById('toastMsg');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
