@@ -63,21 +63,39 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // Harita Başlatma
+        // Haritayı başlat
         var map = L.map('map').setView([42.5, 36.0], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
+        // CartoDB Dark Mode - (Klasik OpenStreetMap yerine bunu kullanıyoruz)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Limanlar
         var limanlar = L.layerGroup([
             L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>'),
             L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>'),
             L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>')
         ]).addTo(map);
 
-        var noktalar = L.layerGroup([
-            L.circleMarker([41.15, 36.20], {color: 'red', radius: 6}).bindPopup('<b>Samsun Lojistik Köyü</b>'),
-            L.marker([41.52, 41.53]).bindPopup('<b>Sarp Sınır Kapısı</b>')
-        ]).addTo(map);
+        // Rotalar (Karanlık temada parlaması için renkleri canlı seçtik)
+        var denizRotalari = L.polyline([
+            [[41.2867, 36.33], [43.2141, 27.9147]], 
+            [[41.2867, 36.33], [41.6168, 41.6367]]
+        ], {color: '#00d2ff', weight: 4}).addTo(map);
 
-        L.control.layers(null, { "Limanlar": limanlar, "Lojistik Merkezleri": noktalar }).addTo(map);
+        var karaYolu = L.polyline([
+            [43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367]
+        ], {color: '#ff9900', weight: 3, dashArray: '10, 10'}).addTo(map);
+
+        // Katman Kontrolü
+        L.control.layers(null, {
+            "Limanlar": limanlar,
+            "Deniz Rotaları": denizRotalari,
+            "Kara Yolu": karaYolu
+        }).addTo(map);
 
         // Sohbet Fonksiyonu (Tek ve temiz hali)
         async function mesajGonder() {
