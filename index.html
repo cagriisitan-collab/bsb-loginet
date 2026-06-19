@@ -1,121 +1,45 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSB-LOGINET | Karadeniz Lojistik Portalı</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta charset="utf-8">
+    <title>BSB-LOGINET | Deck.gl Lojistik Ağı</title>
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; }
-        .navbar { background-color: #003366; padding: 15px 20px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .navbar a { color: white; padding: 10px 15px; text-decoration: none; font-weight: bold; }
-        .content { padding: 40px 20px; text-align: center; }
-        .box-container { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 1000px; margin: 0 auto 40px auto; }
-        #map { height: 400px; width: 100%; border-radius: 5px; border: 1px solid #ccc; margin-top: 15px; }
-        .chat-box { height: 300px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; overflow-y: auto; background-color: #f9f9f9; margin-bottom: 15px; text-align: left; }
-        .chat-message { margin-bottom: 15px; padding: 10px 15px; border-radius: 8px; max-width: 80%; }
-        .bot-message { background-color: #e6f2ff; border-left: 4px solid #003366; }
-        .user-message { background-color: #d1ffd6; border-right: 4px solid #28a745; text-align: right; margin-left: auto; }
-        .chat-input-area { display: flex; gap: 10px; }
-        .chat-input-area input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
-        .chat-input-area button { padding: 12px 25px; background-color: #ff9900; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        body { margin: 0; padding: 0; background: #000; }
+        #map { width: 100vw; height: 100vh; }
     </style>
 </head>
 <body>
-
-    <div class="navbar">
-        <a href="#">Ana Sayfa</a>
-        <a href="#map-section">Ulaşım Haritaları</a>
-        <a href="#ai-section">🤖 Yapay Zeka Botu</a>
-    </div>
-
-    <div class="content">
-        <div class="box-container" id="map-section">
-            <h2>Karadeniz Lojistik Ağı</h2>
-            <div id="map"></div>
-            <style>
-    /* ...diğer stilleriniz buradaysa kalsın... */
-    
-    #map {
-        height: 400px;
-        width: 100%;
-        display: block;
-        margin-top: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-</style>
-}
-        </div>
-
-        <div class="box-container" id="ai-section">
-            <h2>🤖 Gümrük Danışmanı</h2>
-            <div class="chat-box" id="chatBox">
-                <div class="chat-message bot-message"><strong>Sistem:</strong> Merhaba! Karadeniz lojistik ağı asistanına hoş geldiniz.</div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="userInput" placeholder="Sorunuzu yazın..." onkeypress="klavyeKontrol(event)">
-                <button onclick="mesajGonder()">Sorgula</button>
-            </div>
-        </div>
-    </div>
-
-   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div id="map"></div>
     <script>
-        // 1. Haritayı başlat
-        var map = L.map('map').setView([42.5, 36.0], 6);
+        // MapLibre + Deck.gl Entegrasyonu (Mapbox'ın ücretsiz ve açık kaynaklı ikizi)
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+            center: [36.0, 42.5],
+            zoom: 6
+        });
 
-        // 2. Harita Altlığını (Dark Mode) ekle
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© CartoDB',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(map);
-
-        // 3. Limanlar
-        var samsun = L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>');
-        var varna = L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>');
-        var batumi = L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>');
-        
-        var limanlar = L.layerGroup([samsun, varna, batumi]).addTo(map);
-
-        // 4. Rotalar
-        var denizRotalari = L.polyline([
-            [[41.2867, 36.33], [43.2141, 27.9147]], 
-            [[41.2867, 36.33], [41.6168, 41.6367]]
-        ], {color: '#00d2ff', weight: 4}).addTo(map);
-
-        var karaYolu = L.polyline([
-            [43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367]
-        ], {color: '#ff9900', weight: 3, dashArray: '10, 10'}).addTo(map);
-
-        // 5. Katman Kontrolü
-        var overlayMaps = {
-            "Limanlar": limanlar,
-            "Deniz Rotaları": denizRotalari,
-            "Kara Yolu": karaYolu
-        };
-        L.control.layers(null, overlayMaps).addTo(map);
-    </script>
-
-        // Sohbet Fonksiyonu (Tek ve temiz hali)
-        async function mesajGonder() {
-            var input = document.getElementById('userInput');
-            var mesaj = input.value;
-            if(mesaj.trim() === "") return;
-            
-            var chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML += '<div class="chat-message user-message"><strong>Siz:</strong> ' + mesaj + '</div>';
-            input.value = "";
-            
-            // Simülasyon cevabı (API kısmını daha sonra güvenli bir şekilde ekleyeceğiz)
-            setTimeout(() => {
-                chatBox.innerHTML += '<div class="chat-message bot-message"><strong>Sistem:</strong> Şu an geliştirme modundayız. Harita ve arayüzünüz başarıyla çalışıyor!</div>';
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 500);
-        }
-
-        function klavyeKontrol(event) { if (event.key === "Enter") mesajGonder(); }
+        const deck = new deck.DeckGL({
+            container: 'map',
+            map: map,
+            layers: [
+                new deck.ArcLayer({
+                    id: 'rotalar',
+                    data: [
+                        { source: [36.33, 41.2867], target: [27.9147, 43.2141] }, // Samsun-Varna
+                        { source: [36.33, 41.2867], target: [41.6367, 41.6168] }  // Samsun-Batum
+                    ],
+                    getSourcePosition: d => d.source,
+                    getTargetPosition: d => d.target,
+                    getSourceColor: [0, 210, 255],
+                    getTargetColor: [255, 153, 0],
+                    getWidth: 4
+                })
+            ]
+        });
     </script>
 </body>
 </html>
