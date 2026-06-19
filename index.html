@@ -5,76 +5,52 @@
     <title>BSB-LOGINET | Stratejik Lojistik Ağı</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; }
         #map { height: 100vh; width: 100vw; }
-        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 15px; border-radius: 5px; font-family: sans-serif; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
     <div class="overlay">
         <h2 style="margin:0; color:#003366;">BSB-LOGINET</h2>
-        <p>Karadeniz Lojistik Rotaları</p>
+        <p style="margin:5px 0 0 0; font-size:14px;">Gerçek Lojistik Koridorları</p>
     </div>
     <div id="map"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // 1. Harita Kurulumu
         const map = new ol.Map({
             target: 'map',
             layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
             view: new ol.View({ center: ol.proj.fromLonLat([36.0, 42.5]), zoom: 6 })
         });
 
-        // 2. Vektör Kaynağı (Tüm noktalar burada)
         const vectorSource = new ol.source.Vector();
 
-        // Noktaları Ekleme Fonksiyonu
-        function addPoint(lon, lat, name, type) {
-            const feature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
-                name: name
-            });
-            
-            // Renk Ayarı
-            feature.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({ color: type === 'port' ? '#003366' : '#ff9900' }),
-                    stroke: new ol.style.Stroke({ color: 'white', width: 2 })
-                })
-            }));
-            vectorSource.addFeature(feature);
-        }
-
-        // Limanlar
-        addPoint(36.33, 41.2867, "Samsun Limanı", 'port');
-        addPoint(27.9147, 43.2141, "Varna Limanı", 'port');
-        addPoint(41.6367, 41.6168, "Batum Limanı", 'port');
-
-        // Sınır Kapıları
-        addPoint(41.53, 41.52, "Sarp Sınır Kapısı", 'gate');
-        addPoint(27.50, 42.22, "Dereköy Sınır Kapısı", 'gate');
-
-        // 3. Rotalar (Çizgiler)
-        const routes = [
-            [[36.33, 41.2867], [27.9147, 43.2141]], // Samsun-Varna
-            [[36.33, 41.2867], [41.6367, 41.6168]]  // Samsun-Batum
-        ];
-
-        routes.forEach(coords => {
+        // Rota ekleme fonksiyonu (Gerçekçi eğriler için çok noktalı)
+        function addRoute(coords, color, width, dash) {
             const line = new ol.Feature({
                 geometry: new ol.geom.LineString(coords.map(c => ol.proj.fromLonLat(c)))
             });
             line.setStyle(new ol.style.Style({
-                stroke: new ol.style.Stroke({ color: '#003366', width: 3, lineDash: [5, 5] })
+                stroke: new ol.style.Stroke({ color: color, width: width, lineDash: dash })
             }));
             vectorSource.addFeature(line);
-        });
+        }
 
-        // Vektör Katmanını Haritaya Ekle
+        // 1. DENİZ ROTASI (Gerçekçi kavisli rotalar)
+        // Samsun-Varna (Karadeniz orta hat)
+        addRoute([[36.33, 41.28], [33.0, 42.5], [27.91, 43.21]], '#003366', 4, null); 
+        // Samsun-Batum (Kıyıya paralel)
+        addRoute([[36.33, 41.28], [39.0, 41.2], [41.63, 41.61]], '#003366', 4, null);
+
+        // 2. KARAYOLU (E-Yolları rotasını izleyen gerçekçi hatlar)
+        // Samsun -> Sarp (Sahil Yolu E70)
+        addRoute([[36.33, 41.28], [38.0, 41.0], [40.0, 40.9], [41.5, 41.5]], '#ff9900', 3, [5, 5]);
+        // Samsun -> Dereköy (İstanbul bağlantılı hat)
+        addRoute([[36.33, 41.28], [32.0, 41.0], [29.0, 41.0], [27.5, 42.2]], '#ff9900', 3, [5, 5]);
+
         map.addLayer(new ol.layer.Vector({ source: vectorSource }));
-
     </script>
 </body>
 </html>
