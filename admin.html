@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSB-LOGINET Yönetici Paneli</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* GİRİŞ EKRANI TASARIMI */
+        #login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .login-box button:hover { background-color: #00509e; }
+
+        /* YÖNETİCİ PANELİ TASARIMI (Başlangıçta Gizli) */
+        #dashboard-section {
+            display: none; /* Giriş yapılana kadar gizli kalacak */
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #003366;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+        }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 20px;}
+        .sidebar a {
+            padding: 15px 20px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid #004080;
+        }
+        .sidebar a:hover { background-color: #ff9900; color: black; }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .data-table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .data-table th, .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th { background-color: #f4f7f6; }
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-section">
+        <div class="login-box">
+            <h2 style="color: #003366;">BSB-LOGINET CMS</h2>
+            <p style="font-size: 14px; color: #666;">Bölgesel Veri Giriş Portalı</p>
+            <input type="text" id="username" placeholder="Kullanıcı Adı (Örn: admin)">
+            <input type="password" id="password" placeholder="Şifre">
+            <button onclick="sistemeGirisYap()">Giriş Yap</button>
+        </div>
+    </div>
+
+    <div id="dashboard-section">
+        
+        <div class="sidebar">
+            <h2>Lojistik Yönetimi</h2>
+            <a href="#">📊 Ana Panel</a>
+            <a href="#">📝 Yeni Mevzuat Ekle</a>
+            <a href="#">🚢 Ulaşım Rotalarını Güncelle</a>
+            <a href="#">👥 Proje Ortakları (Yetkiler)</a>
+            <a href="#" onclick="cikisYap()" style="color: #ffcccc;">🚪 Çıkış Yap</a>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h2>Hoş Geldiniz, Çağrı IŞITAN</h2>
+                <button class="add-btn">+ Yeni Veri/Haber Ekle</button>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h3 style="margin-top: 0;">Son Eklenen Bölgesel Veriler</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Bölge / Kurum</th>
+                            <th>Ekleyen Personel</th>
+                            <th>Veri Başlığı / Kategori</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18 Haziran 2026</td>
+                            <td>Türkiye / Samsun TSO</td>
+                            <td>Damla</td>
+                            <td>Samsun Limanı Yeşil Lojistik Uygulamaları</td>
+                            <td><span style="color: green;">Yayında</span></td>
+                        </tr>
+                        <tr>
+                            <td>15 Haziran 2026</td>
+                            <td>Türkiye / Samsun TSO</td>
+                            <td>Esma</td>
+                            <td>Karadeniz Gümrük Tarife İstatistikleri</td>
+                            <td><span style="color: green;">Yayında</span></td>
+                        </tr>
+                        <tr>
+                            <td>10 Haziran 2026</td>
+                            <td>Bulgaristan / Varna</td>
+                            <td>Ivan Popov</td>
+                            <td>Sınır Kapısı Geçiş Prosedürleri (Güncelleme)</td>
+                            <td><span style="color: orange;">Onay Bekliyor</span></td>
+                        </tr>
+                        <tr>
+                            <td>05 Haziran 2026</td>
+                            <td>Gürcistan / Batum</td>
+                            <td>Giorgi K.</td>
+                            <td>Demiryolu Entegrasyon Raporu</td>
+                            <td><span style="color: green;">Yayında</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sistemeGirisYap() {
+            // Şimdilik herhangi bir şifre kontrolü yapmadan doğrudan paneli açıyoruz
+            // Gerçek sistemde burada veritabanı kontrolü yapılır
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+        }
+
+        function cikisYap() {
+            // Paneli gizle, giriş ekranını geri getir
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
