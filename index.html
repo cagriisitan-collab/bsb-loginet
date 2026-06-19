@@ -60,27 +60,26 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Harita Başlatma
-        // Haritayı başlat
+        // 1. Haritayı başlat
         var map = L.map('map').setView([42.5, 36.0], 6);
 
-        // CartoDB Dark Mode - (Klasik OpenStreetMap yerine bunu kullanıyoruz)
+        // 2. Harita Altlığını (Dark Mode) ekle
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '© CartoDB',
             subdomains: 'abcd',
             maxZoom: 19
         }).addTo(map);
 
-        // Limanlar
-        var limanlar = L.layerGroup([
-            L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>'),
-            L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>'),
-            L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>')
-        ]).addTo(map);
+        // 3. Limanlar
+        var samsun = L.marker([41.2867, 36.33]).bindPopup('<b>Samsun Limanı</b>');
+        var varna = L.marker([43.2141, 27.9147]).bindPopup('<b>Varna Limanı</b>');
+        var batumi = L.marker([41.6168, 41.6367]).bindPopup('<b>Batum Limanı</b>');
+        
+        var limanlar = L.layerGroup([samsun, varna, batumi]).addTo(map);
 
-        // Rotalar (Karanlık temada parlaması için renkleri canlı seçtik)
+        // 4. Rotalar
         var denizRotalari = L.polyline([
             [[41.2867, 36.33], [43.2141, 27.9147]], 
             [[41.2867, 36.33], [41.6168, 41.6367]]
@@ -90,12 +89,14 @@
             [43.2141, 27.9147], [41.2867, 36.33], [41.6168, 41.6367]
         ], {color: '#ff9900', weight: 3, dashArray: '10, 10'}).addTo(map);
 
-        // Katman Kontrolü
-        L.control.layers(null, {
+        // 5. Katman Kontrolü
+        var overlayMaps = {
             "Limanlar": limanlar,
             "Deniz Rotaları": denizRotalari,
             "Kara Yolu": karaYolu
-        }).addTo(map);
+        };
+        L.control.layers(null, overlayMaps).addTo(map);
+    </script>
 
         // Sohbet Fonksiyonu (Tek ve temiz hali)
         async function mesajGonder() {
