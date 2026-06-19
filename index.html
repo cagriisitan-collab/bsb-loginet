@@ -11,7 +11,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
         
-        /* Zorla Karanlık Modu Engelleme */
         :root { color-scheme: light; --primary: #002b5e; --secondary: #ff6600; --bg: #eaeff5; --panel-bg: #ffffff; }
         * { box-sizing: border-box; }
         body, html { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); overflow-x: hidden; scroll-behavior: smooth; color: #333; }
@@ -33,11 +32,11 @@
         .map-container { flex-grow: 1; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 2px solid #ffffff; position: relative; background: #aadaff !important; min-height: 350px;}
         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: pan-y !important; }
 
-        /* YENİ NESİL KATMAN KONTROLÜ (Açılır Menü İptal - Şık Kapsüller) */
+        /* ŞIK KAPSÜL KATMAN KONTROLLERİ */
         .layer-chips { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; z-index: 10; flex-wrap: wrap; justify-content: flex-end; max-width: 80%; }
         .layer-chip { background: #ffffff !important; border: 2px solid #cbd5e1 !important; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #002b5e !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; font-family: 'Montserrat', sans-serif; user-select: none; }
         .layer-chip.active { border-color: #ff6600 !important; color: #ff6600 !important; box-shadow: 0 4px 15px rgba(255,102,0,0.2); }
-        .layer-chip input { display: none; } /* Checkbox'ı gizle, kapsülün kendisi buton */
+        .layer-chip input { display: none; } 
 
         .chat-panel { width: 360px; background: #ffffff !important; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0; position: relative; z-index: 5;}
         .panel-header { padding: 18px 20px; background: var(--primary) !important; color: #ffffff !important; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 700; font-size: 16px; }
@@ -74,16 +73,16 @@
         .info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 40px; }
         @media (max-width: 1024px) { .info-grid { grid-template-columns: 1fr; } }
         
-        .matrix-card { background: #ffffff !important; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; overflow-x: auto; }
+        .matrix-card, .customs-card, .info-card { background: #ffffff !important; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .matrix-card { overflow-x: auto; }
         .matrix-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         .matrix-table th { padding: 12px; background: #f8fafc !important; font-family: 'Montserrat'; font-weight: 700; color: var(--primary) !important; border-bottom: 2px solid #cbd5e1; text-transform: uppercase; font-size: 11px; }
         .matrix-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: #334155 !important; font-weight: 500; }
         
-        .customs-card { background: #ffffff !important; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; display: flex; flex-direction: column; justify-content: space-between; }
+        .customs-card { display: flex; flex-direction: column; justify-content: space-between; }
         .customs-btn { width: 100%; background: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; padding: 12px 15px; border-radius: 8px; color: var(--primary) !important; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; text-decoration: none; transition: 0.2s; }
         .customs-btn:hover { border-color: var(--secondary) !important; color: var(--secondary) !important; }
 
-        .info-card { background: #ffffff !important; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; }
         .info-card h4, .matrix-card h4, .customs-card h4 { font-family: 'Montserrat'; font-size: 16px; color: var(--primary) !important; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
         .info-card h4 i, .matrix-card h4 i, .customs-card h4 i { color: var(--secondary) !important; }
         .event-list { list-style: none; padding: 0; margin: 0; }
@@ -108,7 +107,7 @@
         .mt-frame { width: 100%; height: 100%; border: none; }
         .modal-right-data { flex: 1; padding: 30px; background: #f8fafc !important; overflow-y: auto; }
         
-        /* ROTA VE REHBER (Karanlık Mod Koruması) */
+        /* ROTA VE REHBER */
         .route-body { padding: 25px; flex-direction: column; overflow-y: auto; background: #ffffff !important; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #d1d9e6 !important; border-radius: 8px; font-family: 'Inter'; font-size: 14px; outline: none; background-color: #f8fafc !important; color: #1e293b !important; }
         .form-control:focus { border-color: var(--primary) !important; }
@@ -165,12 +164,13 @@
 
             /* MOBİLDE KAPSÜLLERİ KÜÇÜLT VE DİZ */
             .layer-chips { top: 10px; right: 10px; max-width: 90%; justify-content: flex-end; }
-            .layer-chip { padding: 5px 10px; font-size: 10px; border-width: 1px !important; }
+            .layer-chip { padding: 6px 12px; font-size: 10px; border-width: 1px !important; }
         }
     </style>
 </head>
 <body>
 
+    <!-- 1. HEADER -->
     <header class="header">
         <div class="logo-container">
             <i class="fas fa-globe-europe" style="font-size: 28px; color: var(--primary);"></i>
@@ -184,8 +184,10 @@
         </nav>
     </header>
 
+    <!-- 2. HERO SECTION -->
     <section class="hero-section">
         <div class="map-container">
+            <!-- YENİ: ŞIK KAPSÜLLER (Varsayılan Açık) -->
             <div class="layer-chips">
                 <label class="layer-chip active" id="lblLand">
                     <input type="checkbox" id="chkLand" checked onchange="toggleLayers()"> <i class="fas fa-truck" style="color:#ff6600;"></i> Karayolu
@@ -200,13 +202,14 @@
             <div id="map"></div>
         </div>
 
+        <!-- CHATBOT -->
         <div id="chatPanel" class="chat-panel">
             <div class="panel-header">
                 <div><i class="fas fa-robot icon"></i> BSB Gümrük Asistanı</div>
                 <button class="mobile-close-btn" onclick="closeChatPanel()"><i class="fas fa-chevron-down"></i></button>
             </div>
             <div class="chat-box" id="chatBox">
-                <div class="chat-msg system">BSB-LOGINET asistanına hoş geldiniz. Karadeniz havzası sınır kapıları ve gümrük prosedürleri hakkında bilgi alabilirsiniz.</div>
+                <div class="chat-msg system">BSB-LOGINET asistanına hoş geldiniz. Karadeniz havzası sınır kapıları, gümrük süreçleri ve TIR parkı yoğunlukları hakkında bilgi alabilirsiniz.</div>
             </div>
             <div class="chat-input">
                 <input type="text" id="userInput" placeholder="Soru sorun...">
@@ -215,6 +218,7 @@
         </div>
     </section>
 
+    <!-- 3. PROJE VİTRİNİ -->
     <section class="project-showcase" id="showcase">
         <div class="eco-banner">
             <div class="eco-info">
@@ -288,6 +292,7 @@
         </div>
     </section>
 
+    <!-- MOBİL ALT NAVİGASYON BARI -->
     <nav class="mobile-nav">
         <button onclick="window.scrollTo(0,0);" class="active" id="navMap"><i class="fas fa-map-marked-alt"></i>Harita</button>
         <button onclick="openRouteModal()"><i class="fas fa-route"></i>Rota</button>
@@ -295,6 +300,7 @@
         <button onclick="openPanel('chatPanel')"><i class="fas fa-robot"></i>Asistan</button>
     </nav>
 
+    <!-- MODAL 1: ROTA PLANLAYICI -->
     <div class="modal-overlay" id="routeModal">
         <div class="modal-box" style="max-width: 550px;">
             <div class="modal-header">
@@ -330,6 +336,7 @@
         </div>
     </div>
 
+    <!-- MODAL 2: DETAY (MARINE TRAFFIC, GÜMRÜK, HUB) -->
     <div class="modal-overlay" id="mainModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -340,6 +347,7 @@
         </div>
     </div>
 
+    <!-- MODAL 3: BSB KÜTÜPHANESİ -->
     <div class="modal-overlay" id="libraryModal">
         <div class="modal-box" style="max-width: 600px;">
             <div class="modal-header">
@@ -355,6 +363,7 @@
         </div>
     </div>
 
+    <!-- MODAL 4: FİRMA REHBERİ -->
     <div class="modal-overlay" id="directoryModal">
         <div class="modal-box" style="max-width: 700px;">
             <div class="modal-header">
@@ -373,6 +382,7 @@
         </div>
     </div>
 
+    <!-- MODAL 5: FİRMA İLETİŞİM KARTI -->
     <div class="modal-overlay" id="companyCardModal" style="z-index:3000;">
         <div class="modal-box" style="max-width: 450px; height: auto;">
             <div class="modal-header">
@@ -383,6 +393,7 @@
         </div>
     </div>
 
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-logos">
             <div class="logo-box" style="border:none; background:transparent; width:auto; padding:0;"><i class="fas fa-flag-eu" style="color:#003399; font-size:28px; margin-right:10px;"></i> Interreg NEXT BSB</div>
@@ -394,6 +405,7 @@
         </div>
     </footer>
 
+    <!-- OpenLayers JS -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
         // --- UX / KONTROLLER ---
@@ -431,17 +443,17 @@
             renderDirectoryList(firmsDatabase.filter(f => f.name.toLowerCase().includes(search) && (country === "" || f.country === country)));
         }
 
-        // --- HARİTA KURULUMU VE TAM GÖRÜNÜRLÜK (HAVA İPTAL) ---
+        // --- HARİTA KURULUMU VE GERÇEK KOORDİNAT GEOMETRİSİ ---
         const bsbExtent = ol.proj.transformExtent([22.0, 39.0, 47.0, 48.0], 'EPSG:4326', 'EPSG:3857');
         const map = new ol.Map({
             target: 'map',
             layers: [ new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' }) }) ],
-            view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.5]), zoom: 6, minZoom: 5, maxZoom: 10, extent: bsbExtent })
+            view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.0]), zoom: 6, minZoom: 5, maxZoom: 10, extent: bsbExtent })
         });
 
         const landSource = new ol.source.Vector(); const seaSource = new ol.source.Vector(); const railSource = new ol.source.Vector();
         
-        // Katmanlar artık varsayılan olarak açık geliyor
+        // Katmanlar varsayılan olarak AÇIK
         const landLayer = new ol.layer.Vector({ source: landSource, visible: true });
         const seaLayer = new ol.layer.Vector({ source: seaSource, visible: true });
         const railLayer = new ol.layer.Vector({ source: railSource, visible: true });
@@ -452,22 +464,31 @@
         const seaStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00509e', width: 3.5, lineDash: [10, 15] }) });
         const railStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#27ae60', width: 4, lineDash: [20, 10, 5, 10] }) });
 
+        // YENİ: Gerçek Karayolu ve Denizyolu Kırılımları (Waypoints)
         const routesData = [
-            { type: 'land', coords: [[36.33, 41.28], [39.72, 41.00], [41.55, 41.52], [41.63, 41.61]] }, // Samsun-Sarp-Batum
-            { type: 'land', coords: [[36.33, 41.28], [32.19, 40.80], [28.97, 41.00], [26.36, 41.71]] }, // Samsun-Kapıkule
-            { type: 'land', coords: [[26.36, 41.71], [27.91, 43.21], [28.65, 44.15]] }, // Kapıkule-Varna-Köstence
+            // E70 Karadeniz Sahil Yolu (Samsun -> Ordu -> Trabzon -> Rize -> Hopa -> Sarp -> Batum)
+            { type: 'land', coords: [[36.33, 41.28], [37.88, 40.98], [39.72, 41.00], [40.52, 41.02], [41.42, 41.39], [41.55, 41.52], [41.63, 41.61]] }, 
+            // E80 Anadolu Otoyolu (Samsun -> Merzifon -> Gerede -> Bolu -> İstanbul -> Edirne -> Kapıkule)
+            { type: 'land', coords: [[36.33, 41.28], [35.46, 40.87], [32.19, 40.80], [31.61, 40.73], [29.10, 41.20], [26.56, 41.67], [26.36, 41.71]] },
+            // Bulgaristan - Romanya (Kapıkule -> Burgaz -> Varna -> Köstence)
+            { type: 'land', coords: [[26.36, 41.71], [27.46, 42.50], [27.91, 43.21], [28.65, 44.15]] }, 
+            // Denizyolu Koridorları
             { type: 'sea', coords: [[36.33, 41.28], [32.00, 42.50], [27.91, 43.21]] }, // Samsun-Varna
             { type: 'sea', coords: [[36.33, 41.28], [39.00, 41.70], [41.67, 42.15]] }, // Samsun-Poti
             { type: 'sea', coords: [[36.33, 41.28], [34.00, 44.00], [30.73, 46.48]] }  // Samsun-Odessa
         ];
         
-        // İç Bölgeler Demiryolu Ağları (Yeni Lojistik Hub'lara bağlantılar)
+        // YENİ: Gerçekçi Demiryolu Hatları (Lojistik Hub Bağlantıları)
         const railData = [ 
-            [[36.33, 41.28], [35.50, 40.50], [32.85, 39.92], [29.97, 40.76], [28.97, 41.00], [26.56, 41.67]], // Samsun-Ankara-İstanbul
-            [[27.91, 43.21], [25.00, 43.00], [23.32, 42.69]], // Varna-Sofya
-            [[41.63, 41.61], [42.50, 42.00], [44.82, 41.71]]  // Batum-Tiflis
+            // Samsun - Sivas - Kayseri - Ankara - İstanbul - Edirne
+            [[36.33, 41.28], [35.83, 40.65], [37.01, 39.75], [35.48, 38.73], [32.85, 39.92], [30.52, 39.77], [29.00, 41.00], [26.56, 41.67], [26.36, 41.71]], 
+            // Varna - Sofya
+            [[27.91, 43.21], [25.00, 43.00], [23.32, 42.69]], 
+            // Batum - Tiflis
+            [[41.63, 41.61], [42.50, 42.00], [44.82, 41.71]]  
         ];
 
+        // Çizgileri Stilleriyle Ekleme
         routesData.forEach(r => { 
             const f = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) }); 
             if(r.type === 'land') { f.setStyle(landStyle); landSource.addFeature(f); }
@@ -475,7 +496,7 @@
         });
         railData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(railStyle); railSource.addFeature(f); });
 
-        // Tıklanan kapsüllerin rengini ve katmanın görünürlüğünü değiştiren fonksiyon
+        // KAPSÜL TIKLAMA FONKSİYONU
         function toggleLayers() {
             const isLand = document.getElementById('chkLand').checked;
             const isSea = document.getElementById('chkSea').checked;
@@ -496,37 +517,52 @@
             landStyle.getStroke().setLineDashOffset(dashOffset);
             seaStyle.getStroke().setLineDashOffset(dashOffset / 1.5);
             railStyle.getStroke().setLineDashOffset(-dashOffset); 
-            landLayer.changed(); seaLayer.changed(); railLayer.changed();
+            landSource.changed(); seaSource.changed(); railSource.changed();
             requestAnimationFrame(animateFlow);
         }
         animateFlow();
 
-        // --- NOKTALAR, LİMANLAR, İÇ GÜMRÜKLER VE MERKEZLER ---
+        // --- YENİ NOKTALAR: LİMANLAR, TIR PARKLARI VE LOJİSTİK MERKEZLER ---
         const markerSource = new ol.source.Vector(); map.addLayer(new ol.layer.Vector({ source: markerSource, zIndex: 10 }));
+        
         function addMarker(lon, lat, name, type, meta) {
             const f = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), name: name, type: type, meta: meta, coords: [lat, lon] });
-            let color = type === 'port' ? '#002b5e' : (type === 'border' ? '#e74c3c' : '#27ae60'); // Yeşil = İç Lojistik Hub
-            f.setStyle(new ol.style.Style({ image: new ol.style.Circle({ radius: 8, fill: new ol.style.Fill({color: color}), stroke: new ol.style.Stroke({color: '#fff', width: 2}) }), text: new ol.style.Text({ text: name, offsetY: -18, font: 'bold 12px Inter', fill: new ol.style.Fill({color: '#111'}), stroke: new ol.style.Stroke({color: '#fff', width: 3}) }) }));
+            
+            // Renk Kodlaması: Liman(Lacivert), Sınır(Kırmızı), Hub/Merkez(Yeşil), Tır Parkı(Turuncu)
+            let color = '#333';
+            if(type === 'port') color = '#00509e';
+            if(type === 'border') color = '#e74c3c';
+            if(type === 'hub') color = '#27ae60';
+            if(type === 'park') color = '#f39c12';
+
+            f.setStyle(new ol.style.Style({ 
+                image: new ol.style.Circle({ radius: 8, fill: new ol.style.Fill({color: color}), stroke: new ol.style.Stroke({color: '#fff', width: 2}) }), 
+                text: new ol.style.Text({ text: name, offsetY: -18, font: 'bold 12px Inter', fill: new ol.style.Fill({color: '#111'}), stroke: new ol.style.Stroke({color: '#fff', width: 3}) }) 
+            }));
             markerSource.addFeature(f);
         }
         
-        // Limanlar
+        // 1. Limanlar
         addMarker(36.33, 41.28, "Samsun Limanı", 'port', { cap1: "250K TEU", cap2: "10.5 m", sName: "Samsunport", sLink: "https://www.samsunport.com.tr/" });
         addMarker(27.91, 43.21, "Varna Limanı", 'port', { cap1: "150K TEU", cap2: "11.5 m", sName: "Port of Varna", sLink: "https://www.port-varna.bg/" });
         addMarker(41.63, 41.61, "Batum Limanı", 'port', { cap1: "100K TEU", cap2: "11.5 m", sName: "Batumi Sea Port", sLink: "http://www.batumiport.com/" });
         addMarker(28.65, 44.15, "Köstence Limanı", 'port', { cap1: "1.2M TEU", cap2: "19.0 m", sName: "Port of Constanta", sLink: "https://www.portofconstantza.com/" });
-        addMarker(30.73, 46.48, "Odessa Limanı", 'port', { cap1: "600K TEU", cap2: "13.0 m", sName: "Port of Odesa", sLink: "#" });
-        addMarker(37.75, 44.71, "Novorossiysk", 'port', { cap1: "800K TEU", cap2: "15.0 m", sName: "NCSP Group", sLink: "#" });
-        addMarker(41.67, 42.15, "Poti Limanı", 'port', { cap1: "400K TEU", cap2: "10.5 m", sName: "APM Terminals Poti", sLink: "#" });
         
-        // Sınır Kapıları
-        addMarker(41.55, 41.52, "Sarp Kapısı", 'border', { cap1: "Normal", cap2: "Müsait", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
+        // 2. Sınır Kapıları
+        addMarker(41.55, 41.52, "Sarp Kapısı", 'border', { cap1: "Hızlı Geçiş", cap2: "Açık", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
         addMarker(26.36, 41.71, "Kapıkule", 'border', { cap1: "Yoğun", cap2: "Dolu", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
+        addMarker(41.60, 41.60, "Batumi Customs", 'border', { cap1: "7/24 Aktif", cap2: "Gümrükleme", sName: "RS Georgia", sLink: "#" });
 
-        // YENİ: İç Lojistik Merkezleri
-        addMarker(32.85, 39.92, "Ankara Lojistik Üssü", 'hub', { cap1: "İç Gümrükleme", cap2: "Açık Tır Parkı", sName: "ALU A.Ş.", sLink: "https://ankaralojistikussu.com/" });
-        addMarker(23.32, 42.69, "Sofya Kargo Terminali", 'hub', { cap1: "Demiryolu Aktarma", cap2: "Intermodal Merkez", sName: "Sofia Freight", sLink: "#" });
-        addMarker(44.82, 41.71, "Tiflis İç Gümrük", 'hub', { cap1: "Kafkasya Transit", cap2: "Depolama Alanı", sName: "Tbilisi Hub", sLink: "#" });
+        // 3. Lojistik Merkezler (Hub)
+        addMarker(36.45, 41.22, "Samsun Lojistik Merkezi", 'hub', { cap1: "80.000 m² Depolama", cap2: "Demiryolu Uç Bağlantısı", sName: "Samsun Lojistik A.Ş.", sLink: "https://www.samsunlojistikmerkezi.com/" });
+        addMarker(32.85, 39.92, "Ankara Lojistik Üssü", 'hub', { cap1: "İç Gümrükleme", cap2: "Intermodal Merkez", sName: "ALU A.Ş.", sLink: "https://ankaralojistikussu.com/" });
+        addMarker(27.85, 43.22, "Varna West Hub", 'hub', { cap1: "Demiryolu Aktarma", cap2: "Genişleme Aşamasında", sName: "Varna West", sLink: "#" });
+        addMarker(44.82, 41.71, "Tiflis Terminali", 'hub', { cap1: "Kafkasya Transit", cap2: "Depolama Alanı", sName: "Tbilisi Hub", sLink: "#" });
+
+        // 4. TIR Parkları
+        addMarker(41.45, 41.40, "Kemalpaşa TIR Parkı", 'park', { cap1: "500 Tır Kapasite", cap2: "Sarp Bekleme Alanı", sName: "Hopa TSO", sLink: "#" });
+        addMarker(26.38, 41.70, "Kapıkule TIR Parkı", 'park', { cap1: "1000 Tır Kapasite", cap2: "Akıllı Sıra Sistemi", sName: "Ticaret Bakanlığı", sLink: "#" });
+
 
         map.on('singleclick', async function(evt) {
             let feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
@@ -534,15 +570,22 @@
                 let m = feature.get('meta'); let lat = feature.get('coords')[0]; let lon = feature.get('coords')[1]; 
                 let type = feature.get('type');
                 
+                // Dinamik İkon Belirleme
+                let icon = 'fa-building';
+                if(type === 'port') icon = 'fa-ship';
+                if(type === 'border') icon = 'fa-passport';
+                if(type === 'hub') icon = 'fa-warehouse';
+                if(type === 'park') icon = 'fa-parking';
+
                 const modal = document.getElementById('mainModal');
-                document.getElementById('modalTitle').innerHTML = `<i class="fas ${type === 'port' ? 'fa-ship' : (type === 'border' ? 'fa-truck-moving' : 'fa-building')}"></i> ${feature.get('name')}`;
+                document.getElementById('modalTitle').innerHTML = `<i class="fas ${icon}"></i> ${feature.get('name')}`;
                 document.getElementById('modalBodyContent').innerHTML = `<div style="width:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; padding: 40px; background:white;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#002b5e; margin-bottom:15px;"></i><b style="color:#333;">Veri Taranıyor...</b></div>`;
                 modal.classList.add('active');
 
                 if (type === 'port') {
                     document.getElementById('modalBodyContent').innerHTML = `<div class="modal-left-iframe"><iframe class="mt-frame" src="https://www.marinetraffic.com/en/ais/embed/zoom:13/centery:${lat}/centerx:${lon}/maptype:1/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false"></iframe></div><div class="modal-right-data" style="background:white;"><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Maksimum Kapasite</span><br><strong>${m.cap1}</strong></div><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Terminal Derinliği</span><br><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" style="display:block; text-align:center; padding:10px; background:#f1f5f9; border-radius:6px; color:var(--primary); text-decoration:none; font-weight:bold;"><i class="fas fa-link"></i> Resmi Kaynak</a></div>`;
                 } else {
-                    document.getElementById('modalBodyContent').innerHTML = `<div class="modal-right-data" style="width:100%; background:white;"><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Tesis / İşlem Durumu</span><br><strong>${m.cap1}</strong></div><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Kapasite Durumu</span><br><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" style="display:block; text-align:center; padding:10px; background:#f1f5f9; border-radius:6px; color:var(--primary); text-decoration:none; font-weight:bold;"><i class="fas fa-link"></i> Merkez Detayları</a></div>`;
+                    document.getElementById('modalBodyContent').innerHTML = `<div class="modal-right-data" style="width:100%; background:white;"><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Tesis / İşlem Durumu</span><br><strong>${m.cap1}</strong></div><div style="padding:15px; border:1px solid #eee; border-radius:8px; margin-bottom:10px;"><span>Kapasite / Durum</span><br><strong>${m.cap2}</strong></div><a href="${m.sLink}" target="_blank" style="display:block; text-align:center; padding:10px; background:#f1f5f9; border-radius:6px; color:var(--primary); text-decoration:none; font-weight:bold;"><i class="fas fa-link"></i> Tesis Ayrıntıları</a></div>`;
                 }
             }
         });
