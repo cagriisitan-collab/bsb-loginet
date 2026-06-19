@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <!-- Mobil uyum için kritik meta etiketi eklendi -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BSB-LOGINET | Karadeniz Lojistik Komuta Merkezi</title>
     
@@ -11,171 +12,253 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
         
-        :root { --primary: #002b5e; --secondary: #ff6600; --bg: #eaeff5; }
+        :root { --primary: #002b5e; --secondary: #ff6600; --bg: #eaeff5; --panel-bg: #ffffff; }
+        * { box-sizing: border-box; }
         body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Inter', sans-serif; background: var(--bg); overflow: hidden; display: flex; flex-direction: column; }
         
         /* 1. HEADER (ÜST MENÜ) */
-        .header { background: white; height: 75px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100; border-bottom: 2px solid var(--primary); }
+        .header { background: white; height: 70px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100; border-bottom: 2px solid var(--primary); }
         .logo-container { display: flex; align-items: center; gap: 15px; }
-        .logo-text { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
+        .logo-text { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
         .logo-text span { color: var(--secondary); }
         
         .main-menu { display: flex; gap: 15px; align-items: center; }
-        .main-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 14px; transition: 0.3s; padding: 10px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .main-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 13px; transition: 0.3s; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .main-menu a:hover, .main-menu a.active { background: rgba(0,43,94,0.05); color: var(--secondary); }
-        .btn-action { background: var(--primary); color: white !important; }
-        .btn-action:hover { background: var(--secondary) !important; color: white !important; transform: translateY(-2px); }
         .btn-report { background: linear-gradient(135deg, var(--secondary), #e65c00); color: white !important; box-shadow: 0 4px 10px rgba(255,102,0,0.3); }
 
-        /* 2. ANA DÜZEN (Sol: Dev Harita, Sağ: Chatbot) */
-        .app-body { display: flex; flex-grow: 1; height: calc(100vh - 145px); padding: 15px; gap: 15px; }
+        /* 2. ANA DÜZEN (3 SÜTUNLU YAPI - MASAÜSTÜ) */
+        .app-body { display: flex; flex-grow: 1; height: calc(100vh - 140px); padding: 15px; gap: 15px; position: relative; }
+
+        /* Sol ve Sağ Paneller (Masaüstü Sabit) */
+        .side-panel { width: 340px; background: var(--panel-bg); border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0; }
+        .panel-header { padding: 15px 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 700; font-size: 15px; }
+        .panel-header i.icon { color: var(--secondary); font-size: 18px; margin-right: 8px; }
+        .panel-content { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .mobile-close-btn { display: none; background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
 
         /* Harita Çerçevesi */
-        .map-container { flex-grow: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid white; position: relative; background: #aadaff; }
+        .map-container { flex-grow: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 2px solid white; position: relative; background: #aadaff; }
         #map { width: 100%; height: 100%; }
 
-        /* Sağ Sütun: Chatbot */
-        .chat-panel { width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0; }
-        .panel-header { padding: 18px 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 700; font-size: 15px; }
-        .panel-header i.icon { color: var(--secondary); font-size: 18px; margin-right: 8px; }
-        
+        /* Harita Katman Kontrolü (Yeni) */
+        .layer-control { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; font-size: 12px; font-weight: 600; color: var(--primary); }
+        .layer-control label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; }
+        .layer-control input { cursor: pointer; }
+        .layer-title { font-family: 'Montserrat'; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        /* FORMLAR & ROTA */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #d1d9e6; border-radius: 6px; font-family: 'Inter'; font-size: 13px; outline: none; background: #f8fafc; }
+        .btn-calc { width: 100%; background: var(--secondary); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-family: 'Montserrat'; cursor: pointer; margin-top: 5px; }
+        .route-result { margin-top: 15px; padding: 15px; background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 6px; display: none; font-size: 12px; }
+        .co2-box { margin-top: 10px; padding: 8px; background: #e8f4fd; border-radius: 6px; border: 1px solid #bce0fd; font-weight: 600; color: #00509e; display: flex; align-items: center; gap: 8px; }
+
+        /* CHATBOT */
         .chat-box { flex-grow: 1; overflow-y: auto; padding: 15px; background: #f8fafc; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-box::-webkit-scrollbar { width: 5px; }
-        .chat-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
-        .chat-msg { padding: 12px 15px; border-radius: 10px; line-height: 1.4; width: fit-content; max-width: 85%; }
-        .chat-msg.system { background: white; border-left: 4px solid var(--secondary); color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chat-msg { padding: 10px 12px; border-radius: 10px; line-height: 1.4; width: fit-content; max-width: 85%; }
+        .chat-msg.system { background: white; border-left: 3px solid var(--secondary); color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .chat-msg.user { background: #e8f4fd; color: var(--primary); margin-left: auto; border-bottom-right-radius: 0; font-weight: 600; }
-        .chat-input { display: flex; padding: 15px; background: white; border-top: 1px solid #eee; }
-        .chat-input input { flex-grow: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-family: 'Inter'; }
-        .chat-input button { background: var(--primary); color: white; border: none; padding: 0 18px; border-radius: 8px; margin-left: 10px; cursor: pointer; transition: 0.2s;}
-        .chat-input button:hover { background: var(--secondary); }
+        .chat-input { display: flex; padding: 10px; background: white; border-top: 1px solid #eee; }
+        .chat-input input { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
+        .chat-input button { background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 6px; margin-left: 8px; cursor: pointer; }
 
-        /* 3. MODALLAR (Üstte Açılan Pencereler) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 43, 94, 0.7); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        /* 3. MODALLAR (MARINE TRAFFIC VE KÜTÜPHANE) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 43, 94, 0.7); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 15px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-box { background: white; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.4); overflow: hidden; transform: scale(0.9); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; }
+        .modal-box { background: white; width: 100%; max-width: 900px; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; transform: scale(0.9); transition: 0.3s; display: flex; flex-direction: column; max-height: 90vh; }
         .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-header { background: var(--primary); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+        .close-modal-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         
-        .modal-header { background: var(--primary); color: white; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-size: 18px; font-weight: 800; }
-        .close-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; transition: 0.2s; }
-        .close-btn:hover { color: var(--secondary); transform: scale(1.1); }
-
-        /* ROTA PLANLAYICI MODALI */
-        #routeModalBox { width: 500px; }
-        .route-form { padding: 25px; }
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; }
-        .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 5px; }
-        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #d1d9e6; border-radius: 8px; font-family: 'Inter'; font-size: 13px; outline: none; background: #f8fafc; box-sizing: border-box;}
-        .form-control:focus { border-color: var(--secondary); background: white; }
-        .btn-calc { width: 100%; background: var(--secondary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-family: 'Montserrat'; font-size: 15px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-calc:hover { background: var(--primary); }
-        .route-result { margin-top: 20px; padding: 15px; background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 8px; display: none; font-size: 13px; }
-
-        /* MARINE TRAFFIC DEV MODAL */
-        #portModalBox { width: 85%; max-width: 1000px; }
-        .port-modal-body { display: flex; height: 500px; }
-        .modal-left-iframe { flex: 2; background: #eee; border-right: 1px solid #ddd; }
+        .modal-body { display: flex; flex-grow: 1; overflow: hidden; flex-direction: row; }
+        .modal-left-iframe { flex: 2; background: #eee; position: relative; border-right: 1px solid #ddd; min-height: 300px; }
         .mt-frame { width: 100%; height: 100%; border: none; }
-        .modal-right-data { flex: 1; padding: 30px; background: #f8fafc; overflow-y: auto; }
-        .data-grid { display: flex; flex-direction: column; gap: 15px; }
-        .data-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .data-card span { display: block; font-size: 11px; color: #777; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
-        .data-card strong { color: var(--primary); font-size: 16px; font-weight: 800; font-family: 'Montserrat'; }
-        .weather-banner { background: #e8f4fd; padding: 15px; border-radius: 10px; font-size: 14px; display: flex; align-items: center; gap: 10px; font-weight: 600; color: #00509e; border-left: 4px solid #3498db; margin-top: 15px; }
-        .source-btn { display: inline-block; width: 100%; text-align: center; background: white; border: 1px solid #ddd; padding: 12px; border-radius: 8px; color: #555; text-decoration: none; font-weight: 700; margin-top: 20px; transition: 0.2s; box-sizing: border-box; }
-        .source-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+        .modal-right-data { flex: 1; padding: 20px; background: #f8fafc; overflow-y: auto; }
+        
+        .data-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+        .data-card span { display: block; font-size: 10px; color: #777; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .data-card strong { color: var(--primary); font-size: 15px; font-weight: 800; font-family: 'Montserrat'; }
+        
+        /* Kütüphane Modal Özel Stili */
+        .lib-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 15px; }
+        .lib-tab { padding: 10px 15px; font-weight: 600; color: #555; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .lib-tab.active { color: var(--secondary); border-color: var(--secondary); }
+        .lib-list { list-style: none; padding: 0; margin: 0; }
+        .lib-list li { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .lib-list li i { color: #e74c3c; font-size: 18px; }
 
         /* 4. FOOTER */
-        .footer { background: white; height: 70px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); z-index: 50; }
-        .footer-logos { display: flex; align-items: center; gap: 30px; }
-        .logo-box { height: 40px; padding: 0 20px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #666; }
+        .footer { background: white; height: 70px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); z-index: 50; }
+        .footer-logos { display: flex; align-items: center; gap: 20px; }
+        .logo-box { height: 35px; padding: 0 15px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #666; }
 
+        /* =======================================================
+           MOBİL UYUM (RESPONSIVE) - SİHİR BURADA BAŞLIYOR!
+           ======================================================= */
+        .mobile-nav { display: none; } /* Masaüstünde gizle */
+
+        @media (max-width: 900px) {
+            /* Header */
+            .header { padding: 0 15px; }
+            .logo-text { font-size: 18px; }
+            .main-menu { display: none; } /* Üst menüyü gizle */
+
+            /* Ana Gövde: Harita Tam Ekran Olsun */
+            .app-body { padding: 0; height: calc(100vh - 130px); }
+            .map-container { border-radius: 0; border: none; }
+
+            /* Panelleri "Alttan Açılan Çekmece" (Bottom Sheet) yap */
+            .side-panel { position: fixed; left: 0; width: 100%; height: 75vh; bottom: -100%; border-radius: 20px 20px 0 0; z-index: 1000; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border: none; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
+            .side-panel.mobile-open { bottom: 0; }
+            .mobile-close-btn { display: block; } /* Kapatma butonunu mobilde göster */
+
+            /* Alt Navigasyon Barı (Sadece Mobilde Görünür) */
+            .mobile-nav { display: flex; justify-content: space-around; align-items: center; background: white; height: 60px; width: 100%; position: fixed; bottom: 0; left: 0; z-index: 500; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); border-top: 1px solid #eee; }
+            .mobile-nav button { flex: 1; background: none; border: none; color: #555; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; font-family: 'Inter'; cursor: pointer; }
+            .mobile-nav button i { font-size: 18px; color: var(--primary); }
+            .mobile-nav button.active { color: var(--secondary); }
+            .mobile-nav button.active i { color: var(--secondary); }
+
+            /* Footer'ı Mobilde Gizle (Alan kazanmak için) */
+            .footer { display: none; }
+
+            /* Modalları Mobilde Dikleştir */
+            .modal-box { height: 85vh; width: 95%; max-width: none; }
+            .modal-body { flex-direction: column; overflow-y: auto; }
+            .modal-left-iframe { flex: none; height: 300px; border-right: none; border-bottom: 1px solid #ddd; }
+            .modal-right-data { flex: none; padding: 15px; }
+
+            /* Harita Katman Kontrolünü Mobilde Küçült */
+            .layer-control { top: 10px; right: 10px; padding: 10px; font-size: 11px; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- ÜST MENÜ (Masaüstü) -->
     <header class="header">
         <div class="logo-container">
-            <i class="fas fa-globe-europe" style="font-size: 28px; color: var(--primary);"></i>
+            <i class="fas fa-globe-europe" style="font-size: 24px; color: var(--primary);"></i>
             <div class="logo-text">BSB-<span>LOGINET</span></div>
         </div>
         <nav class="main-menu">
             <a href="#" class="active"><i class="fas fa-home"></i> Ana Sayfa</a>
             <a href="#"><i class="fas fa-info-circle"></i> Proje Hakkında</a>
-            <a onclick="openRouteModal()" class="btn-action"><i class="fas fa-route"></i> Akıllı Rota Paneli</a>
-            <a href="#" class="btn-report"><i class="fas fa-file-pdf"></i> İhtiyaç Analizi İndir</a>
+            <a href="#"><i class="fas fa-handshake"></i> Lojistik Zirvesi</a>
+            <a onclick="openLibraryModal()" class="btn-report"><i class="fas fa-book"></i> BSB Kütüphanesi & Rehber</a>
         </nav>
     </header>
 
+    <!-- ANA GÖVDE -->
     <div class="app-body">
         
-        <div class="map-container">
-            <div id="map"></div>
+        <!-- SOL SÜTUN: ROTA PLANLAYICI -->
+        <div id="plannerPanel" class="side-panel">
+            <div class="panel-header">
+                <div><i class="fas fa-route icon"></i> Rota Optimizasyonu</div>
+                <button class="mobile-close-btn" onclick="closePanels()"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            <div class="panel-content">
+                <div class="form-group"><label>Çıkış Ülkesi & Şehri</label>
+                    <div style="display:flex; gap:10px;">
+                        <select id="originCountry" class="form-control" onchange="updateCities('origin')">
+                            <option value="">Ülke...</option><option value="TR">Türkiye</option><option value="BG">Bulgaristan</option><option value="GE">Gürcistan</option><option value="RO">Romanya</option>
+                        </select>
+                        <select id="originCity" class="form-control" disabled><option>Şehir...</option></select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Varış Ülkesi & Şehri</label>
+                    <div style="display:flex; gap:10px;">
+                        <select id="destCountry" class="form-control" onchange="updateCities('dest')">
+                            <option value="">Ülke...</option><option value="TR">Türkiye</option><option value="BG">Bulgaristan</option><option value="GE">Gürcistan</option><option value="RO">Romanya</option>
+                        </select>
+                        <select id="destCity" class="form-control" disabled><option>Şehir...</option></select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Yük Türü ve Ağırlık (Ton)</label>
+                    <div style="display:flex; gap:10px;">
+                        <select id="cargoType" class="form-control"><option value="Konteyner">Konteyner (TEU)</option><option value="Dokme">Dökme Yük</option></select>
+                        <input type="number" id="cargoWeight" class="form-control" placeholder="Ağırlık...">
+                    </div>
+                </div>
+                <button class="btn-calc" onclick="hesaplaCanliRota()">Rotayı Analiz Et</button>
+                <div id="routeResult" class="route-result"></div>
+            </div>
         </div>
 
-        <div class="chat-panel">
+        <!-- ORTA: HARİTA VE KATMAN KONTROLÜ -->
+        <div class="map-container">
+            <div id="map"></div>
+            <!-- Projeye Eklenen Demiryolu/Havayolu Modülü -->
+            <div class="layer-control">
+                <div class="layer-title"><i class="fas fa-layer-group"></i> Ağ Katmanları</div>
+                <label><input type="checkbox" id="chkLand" checked onchange="toggleLayers()"> <i class="fas fa-truck" style="color:#ff6600;"></i> Karayolu</label>
+                <label><input type="checkbox" id="chkSea" checked onchange="toggleLayers()"> <i class="fas fa-ship" style="color:#00509e;"></i> Denizyolu</label>
+                <label><input type="checkbox" id="chkRail" onchange="toggleLayers()"> <i class="fas fa-train" style="color:#27ae60;"></i> Demiryolu Ağı</label>
+                <label><input type="checkbox" id="chkAir" onchange="toggleLayers()"> <i class="fas fa-plane" style="color:#8e44ad;"></i> Hava Kargo</label>
+            </div>
+        </div>
+
+        <!-- SAĞ SÜTUN: CHATBOT -->
+        <div id="chatPanel" class="side-panel">
             <div class="panel-header">
-                <div><i class="fas fa-robot icon"></i> BSB Asistanı</div>
+                <div><i class="fas fa-robot icon"></i> BSB Gümrük Asistanı</div>
+                <button class="mobile-close-btn" onclick="closePanels()"><i class="fas fa-chevron-down"></i></button>
             </div>
             <div class="chat-box" id="chatBox">
-                <div class="chat-msg system">BSB-LOGINET platformuna hoş geldiniz. Karadeniz havzası limanları, EEN ağları ve gümrük prosedürleri hakkında anlık bilgi alabilirsiniz.</div>
+                <div class="chat-msg system">BSB-LOGINET asistanına hoş geldiniz. Karadeniz havzası sınır kapıları, EEN ağları ve gümrük prosedürleri hakkında bilgi alabilirsiniz.</div>
             </div>
             <div class="chat-input">
                 <input type="text" id="userInput" placeholder="Soru sorun...">
                 <button onclick="mesajGonder()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
-
     </div>
 
-    <div class="modal-overlay" id="routeModal">
-        <div class="modal-box" id="routeModalBox">
+    <!-- MOBİL ALT NAVİGASYON BARI -->
+    <nav class="mobile-nav">
+        <button onclick="openPanel('map')" class="active" id="navMap"><i class="fas fa-map-marked-alt"></i>Harita</button>
+        <button onclick="openPanel('plannerPanel')" id="navRoute"><i class="fas fa-route"></i>Rota</button>
+        <button onclick="openPanel('chatPanel')" id="navChat"><i class="fas fa-robot"></i>Asistan</button>
+        <button onclick="openLibraryModal()"><i class="fas fa-book"></i>Kütüphane</button>
+    </nav>
+
+    <!-- MODAL 1: LİMAN VE MARINE TRAFFIC -->
+    <div class="modal-overlay" id="mainModal">
+        <div class="modal-box">
             <div class="modal-header">
-                <span><i class="fas fa-route"></i> Dinamik Rota Optimizasyonu</span>
-                <button class="close-btn" onclick="closeRouteModal()"><i class="fas fa-times"></i></button>
+                <span id="modalTitle"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</span>
+                <button class="close-modal-btn" onclick="closeMainModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="route-form">
-                <div class="form-row">
-                    <div class="form-group"><label>Çıkış Ülkesi & Şehri</label>
-                        <div style="display:flex; gap:10px;">
-                            <select id="originCountry" class="form-control" onchange="updateCities('origin')">
-                                <option value="">Ülke...</option><option value="TR">Türkiye</option><option value="BG">Bulgaristan</option><option value="GE">Gürcistan</option><option value="RO">Romanya</option>
-                            </select>
-                            <select id="originCity" class="form-control" disabled><option>Şehir...</option></select>
-                        </div>
-                    </div>
+            <div class="modal-body" id="modalBodyContent"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: BSB KÜTÜPHANESİ & FİRMA REHBERİ (Proje Çıktısı) -->
+    <div class="modal-overlay" id="libraryModal">
+        <div class="modal-box" style="max-width: 600px; height: 80vh;">
+            <div class="modal-header">
+                <span><i class="fas fa-book-open"></i> BSB Kütüphanesi & Rehber</span>
+                <button class="close-modal-btn" onclick="document.getElementById('libraryModal').classList.remove('active')"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="padding: 20px; overflow-y:auto;">
+                <div class="lib-tabs">
+                    <div class="lib-tab active">Aktivite Raporları</div>
+                    <div class="lib-tab">Gümrük Mevzuatları</div>
+                    <div class="lib-tab">Firma Rehberi</div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Varış Ülkesi & Şehri</label>
-                        <div style="display:flex; gap:10px;">
-                            <select id="destCountry" class="form-control" onchange="updateCities('dest')">
-                                <option value="">Ülke...</option><option value="TR">Türkiye</option><option value="BG">Bulgaristan</option><option value="GE">Gürcistan</option><option value="RO">Romanya</option>
-                            </select>
-                            <select id="destCity" class="form-control" disabled><option>Şehir...</option></select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group"><label>Yük Türü</label>
-                    <select id="cargoType" class="form-control"><option value="Konteyner">Konteyner (TEU)</option><option value="Frigo">Frigo</option><option value="Dokme">Dökme Yük</option></select>
-                </div>
-                <button class="btn-calc" onclick="hesaplaCanliRota()">Rotayı Analiz Et ve Çiz</button>
-                <div id="routeResult" class="route-result"></div>
+                <ul class="lib-list">
+                    <li><div><b>Bölgesel Lojistik İhtiyaç Analizi</b><br><span style="color:#777; font-size:11px;">Aktivite 1.1 Çıktısı (Samsun, Varna, Acara)</span></div><a href="#"><i class="fas fa-file-pdf"></i></a></li>
+                    <li><div><b>Yeşil Lojistik Strateji Belgesi</b><br><span style="color:#777; font-size:11px;">Mavi Ekonomi Uygulamaları</span></div><a href="#"><i class="fas fa-file-pdf"></i></a></li>
+                    <li><div><b>Sınır Ötesi İşbirliği Protokolü</b><br><span style="color:#777; font-size:11px;">SCCI, VCCI, ACCI Ortaklık Anlaşması</span></div><a href="#"><i class="fas fa-file-pdf"></i></a></li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="portModal">
-        <div class="modal-box" id="portModalBox">
-            <div class="modal-header">
-                <span id="portModalTitle"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</span>
-                <button class="close-btn" onclick="closePortModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="port-modal-body" id="portModalBody">
-                </div>
-        </div>
-    </div>
-
+    <!-- FOOTER (Masaüstü) -->
     <footer class="footer">
         <div class="footer-logos">
             <div class="logo-box" style="border:none; background:transparent;"><i class="fas fa-flag-eu" style="color:#003399; font-size:24px; margin-right:8px;"></i> Interreg NEXT BSB</div>
@@ -187,141 +270,141 @@
         </div>
     </footer>
 
+    <!-- OpenLayers JS -->
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // --- UX / MODAL FONKSİYONLARI ---
-        function openRouteModal() { document.getElementById('routeModal').classList.add('active'); }
-        function closeRouteModal() { document.getElementById('routeModal').classList.remove('active'); }
-        function openPortModal() { document.getElementById('portModal').classList.add('active'); }
-        function closePortModal() { document.getElementById('portModal').classList.remove('active'); document.getElementById('portModalBody').innerHTML=''; }
+        // --- MOBİL MENÜ YÖNETİMİ ---
+        function closePanels() {
+            document.getElementById('plannerPanel').classList.remove('mobile-open');
+            document.getElementById('chatPanel').classList.remove('mobile-open');
+            document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('navMap').classList.add('active');
+        }
+        function openPanel(panelId) {
+            closePanels();
+            document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active'));
+            if(panelId === 'map') {
+                document.getElementById('navMap').classList.add('active');
+            } else {
+                document.getElementById(panelId).classList.add('mobile-open');
+                document.getElementById(panelId === 'plannerPanel' ? 'navRoute' : 'navChat').classList.add('active');
+            }
+        }
+        function openLibraryModal() { document.getElementById('libraryModal').classList.add('active'); }
+        function closeMainModal() { document.getElementById('mainModal').classList.remove('active'); document.getElementById('modalBodyContent').innerHTML='';}
 
         // --- HARİTA KURULUMU ---
-        // Sadece Karadeniz'i gösterecek şekilde ayarlandı
+        const bsbExtent = ol.proj.transformExtent([22.0, 40.0, 45.0, 47.0], 'EPSG:4326', 'EPSG:3857');
         const map = new ol.Map({
             target: 'map',
             layers: [ new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' }) }) ],
-            view: new ol.View({ center: ol.proj.fromLonLat([34.0, 43.5]), zoom: 6.2, minZoom: 5.5, maxZoom: 10 })
+            view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.5]), zoom: 6, minZoom: 5, maxZoom: 10, extent: bsbExtent })
         });
 
-        // --- GERÇEKÇİ ROTA ÇİZİMLERİ (DENİZ VE KARA) ---
-        // Emojiler kaldırıldı, profesyonel kesikli "akan" hatlara dönüldü
-        const routesData = [
-            // KARA ROTALARI
-            { type: 'land', coords: [[36.33, 41.28], [37.28, 41.13], [38.38, 40.91], [39.72, 41.00], [40.52, 41.03], [41.42, 41.39], [41.55, 41.52], [41.63, 41.61]] }, // Samsun-Sarp-Batum (E-70)
-            { type: 'land', coords: [[36.33, 41.28], [34.84, 40.97], [32.19, 40.80], [29.93, 40.76], [28.97, 41.00], [27.80, 41.16], [26.36, 41.71]] }, // Samsun-Kapıkule (E-80)
-            { type: 'land', coords: [[26.36, 41.71], [26.32, 41.76], [27.46, 42.50], [27.91, 43.21], [28.65, 44.15]] }, // Kapıkule-Burgaz-Varna-Köstence
-            // DENİZ ROTALARI (Ana Nakliye Koridorları)
-            { type: 'sea', coords: [[36.33, 41.28], [32.00, 42.50], [27.91, 43.21]] }, // Samsun - Varna
-            { type: 'sea', coords: [[36.33, 41.28], [33.00, 43.00], [28.65, 44.15]] }, // Samsun - Köstence
-            { type: 'sea', coords: [[36.33, 41.28], [34.00, 44.00], [30.73, 46.48]] }, // Samsun - Odessa
-            { type: 'sea', coords: [[36.33, 41.28], [37.00, 43.00], [37.75, 44.71]] }, // Samsun - Novorossiysk
-            { type: 'sea', coords: [[36.33, 41.28], [39.00, 41.70], [41.67, 42.15]] }, // Samsun - Poti / Batum
-            { type: 'sea', coords: [[29.00, 41.20], [29.50, 42.00], [27.91, 43.21]] }  // İstanbul - Varna
-        ];
-
+        // --- KATMANLAR (KARA, DENİZ, DEMİRYOLU, HAVA) ---
         const routeSource = new ol.source.Vector();
-        map.addLayer(new ol.layer.Vector({ source: routeSource }));
+        const railSource = new ol.source.Vector();
+        const airSource = new ol.source.Vector();
+        
+        const routeLayer = new ol.layer.Vector({ source: routeSource });
+        const railLayer = new ol.layer.Vector({ source: railSource, visible: false });
+        const airLayer = new ol.layer.Vector({ source: airSource, visible: false });
+        
+        map.addLayer(routeLayer); map.addLayer(railLayer); map.addLayer(airLayer);
 
+        // Stiller
         const landStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#ff6600', width: 3, lineDash: [8, 12] }) });
         const seaStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#00509e', width: 3, lineDash: [10, 15] }) });
+        const railStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#27ae60', width: 4, lineDash: [20, 10, 5, 10] }) }); // Tren yolu deseni
+        const airStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#8e44ad', width: 2, lineDash: [5, 15] }) }); // Kesik uçak rotası
 
-        routesData.forEach(r => {
-            const feature = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) });
-            feature.setStyle(r.type === 'land' ? landStyle : seaStyle);
-            routeSource.addFeature(feature);
-        });
+        // Veriler
+        const routesData = [
+            { type: 'land', coords: [[36.33, 41.28], [39.72, 41.00], [41.55, 41.52], [41.63, 41.61]] },
+            { type: 'land', coords: [[36.33, 41.28], [32.19, 40.80], [28.97, 41.00], [26.36, 41.71]] },
+            { type: 'land', coords: [[26.36, 41.71], [27.91, 43.21], [28.65, 44.15]] },
+            { type: 'sea', coords: [[36.33, 41.28], [32.00, 42.50], [27.91, 43.21]] },
+            { type: 'sea', coords: [[36.33, 41.28], [39.00, 41.70], [41.67, 42.15]] }
+        ];
+        // Demiryolu (Samsun-Sivas-İstanbul / Varna-Sofya)
+        const railData = [ [[36.33, 41.28], [36.00, 40.50], [35.00, 39.50], [32.00, 39.90], [28.97, 41.00], [26.56, 41.67]], [[27.91, 43.21], [25.00, 43.00], [23.32, 42.69]] ];
+        // Havayolu (Samsun Çarşamba - Varna - Batumi)
+        const airData = [ [[36.55, 41.25], [27.82, 43.23]], [[36.55, 41.25], [41.61, 41.61]] ];
 
-        // Çizgilerin hareket etmesi (Animasyon)
+        // Rotaları Çiz
+        routesData.forEach(r => { const f = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) }); f.setStyle(r.type==='land'?landStyle:seaStyle); f.set('type', r.type); routeSource.addFeature(f); });
+        railData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(railStyle); railSource.addFeature(f); });
+        airData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(airStyle); airSource.addFeature(f); });
+
+        // Katman Kontrol Sistemi
+        function toggleLayers() {
+            const showLand = document.getElementById('chkLand').checked;
+            const showSea = document.getElementById('chkSea').checked;
+            railLayer.setVisible(document.getElementById('chkRail').checked);
+            airLayer.setVisible(document.getElementById('chkAir').checked);
+            
+            routeSource.getFeatures().forEach(f => {
+                if(f.get('type') === 'land') f.setStyle(showLand ? landStyle : new ol.style.Style(null));
+                if(f.get('type') === 'sea') f.setStyle(showSea ? seaStyle : new ol.style.Style(null));
+            });
+        }
+
+        // Animasyon
         let dashOffset = 0;
         function animateFlow() {
             dashOffset -= 0.6;
             landStyle.getStroke().setLineDashOffset(dashOffset);
             seaStyle.getStroke().setLineDashOffset(dashOffset / 1.5);
-            routeSource.changed();
+            railStyle.getStroke().setLineDashOffset(-dashOffset); // Tren ters yönde aksın
+            routeSource.changed(); railSource.changed();
             requestAnimationFrame(animateFlow);
         }
         animateFlow();
 
-        // --- TÜM KARADENİZ LİMANLARI VE SINIR KAPILARI ---
+        // --- STATİK NOKTALAR ---
         const markerSource = new ol.source.Vector();
         map.addLayer(new ol.layer.Vector({ source: markerSource, zIndex: 10 }));
 
         function addMarker(lon, lat, name, type, meta) {
             const f = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), name: name, type: type, meta: meta, coords: [lat, lon] });
             let color = type === 'port' ? '#002b5e' : '#e74c3c';
-            f.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({ radius: 8, fill: new ol.style.Fill({color: color}), stroke: new ol.style.Stroke({color: '#fff', width: 2}) }),
-                text: new ol.style.Text({ text: name, offsetY: -18, font: 'bold 12px Inter', fill: new ol.style.Fill({color: '#111'}), stroke: new ol.style.Stroke({color: '#fff', width: 3}) })
-            }));
+            f.setStyle(new ol.style.Style({ image: new ol.style.Circle({ radius: 8, fill: new ol.style.Fill({color: color}), stroke: new ol.style.Stroke({color: '#fff', width: 2}) }), text: new ol.style.Text({ text: name, offsetY: -18, font: 'bold 12px Inter', fill: new ol.style.Fill({color: '#111'}), stroke: new ol.style.Stroke({color: '#fff', width: 3}) }) }));
             markerSource.addFeature(f);
         }
-
-        // TÜRKIYE
         addMarker(36.33, 41.28, "Samsun Limanı", 'port', { cap1: "250K TEU", cap2: "10.5 m", sName: "Samsunport", sLink: "https://www.samsunport.com.tr/" });
-        addMarker(28.67, 40.96, "Ambarlı / İstanbul", 'port', { cap1: "3.5M TEU", cap2: "14.5 m", sName: "Ambarlı Limanı", sLink: "#" });
-        // BULGARİSTAN
         addMarker(27.91, 43.21, "Varna Limanı", 'port', { cap1: "150K TEU", cap2: "11.5 m", sName: "Port of Varna", sLink: "https://www.port-varna.bg/" });
-        addMarker(27.46, 42.50, "Burgaz Limanı", 'port', { cap1: "120K TEU", cap2: "12.0 m", sName: "Port of Burgas", sLink: "https://port-burgas.bg/" });
-        // ROMANYA
-        addMarker(28.65, 44.15, "Köstence Limanı", 'port', { cap1: "1.2M TEU", cap2: "19.0 m", sName: "Port of Constanta", sLink: "https://www.portofconstantza.com/" });
-        // UKRAYNA
-        addMarker(30.73, 46.48, "Odessa Limanı", 'port', { cap1: "600K TEU", cap2: "13.0 m", sName: "Port of Odesa", sLink: "#" });
-        // RUSYA
-        addMarker(37.75, 44.71, "Novorossiysk", 'port', { cap1: "800K TEU", cap2: "15.0 m", sName: "NCSP Group", sLink: "#" });
-        // GÜRCİSTAN
         addMarker(41.63, 41.61, "Batum Limanı", 'port', { cap1: "100K TEU", cap2: "11.5 m", sName: "Batumi Sea Port", sLink: "http://www.batumiport.com/" });
-        addMarker(41.67, 42.15, "Poti Limanı", 'port', { cap1: "400K TEU", cap2: "10.5 m", sName: "APM Terminals Poti", sLink: "#" });
-        
-        // SINIR KAPILARI
-        addMarker(41.55, 41.52, "Sarp Kapısı", 'border', { cap1: "Normal", cap2: "Müsait", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/KapiDurum/" });
-        addMarker(26.36, 41.71, "Kapıkule", 'border', { cap1: "Yoğun", cap2: "Dolu", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/KapiDurum/" });
+        addMarker(28.65, 44.15, "Köstence Limanı", 'port', { cap1: "1.2M TEU", cap2: "19.0 m", sName: "Port of Constanta", sLink: "https://www.portofconstantza.com/" });
+        addMarker(41.55, 41.52, "Sarp Kapısı", 'border', { cap1: "Normal", cap2: "Müsait", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
+        addMarker(26.36, 41.71, "Kapıkule", 'border', { cap1: "Yoğun", cap2: "Dolu", sName: "Ticaret Bakanlığı", sLink: "https://uygulama.gtb.gov.tr/" });
 
-        // --- LİMANLARA TIKLAMA (MARINE TRAFFIC MODALI) ---
-        async function fetchWeather(lat, lon) {
-            try {
-                let res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-                let data = await res.json();
-                return `<i class="fas fa-cloud-sun"></i> Sıcaklık: ${data.current_weather.temperature}°C | Rüzgar: ${data.current_weather.windspeed} km/s`;
-            } catch(e) { return `Hava verisi alınamadı`; }
-        }
-
+        // --- BÜYÜK MODAL (MARINETRAFFIC) ---
         map.on('singleclick', async function(evt) {
             let feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
             if (feature && feature.get('meta')) {
-                let m = feature.get('meta');
-                let lat = feature.get('coords')[0]; let lon = feature.get('coords')[1];
-                let isPort = feature.get('type') === 'port';
-
-                document.getElementById('portModalTitle').innerHTML = `<i class="fas ${isPort ? 'fa-ship' : 'fa-truck-moving'}"></i> ${feature.get('name')}`;
-                document.getElementById('portModalBody').innerHTML = `<div style="width:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; padding: 40px;"><i class="fas fa-spinner fa-spin fa-3x" style="color:#002b5e; margin-bottom:15px;"></i><b style="color:#555;">Canlı Veri Ağına Bağlanılıyor...</b></div>`;
-                openPortModal();
-
-                let weatherHtml = await fetchWeather(lat, lon);
+                let m = feature.get('meta'); let lat = feature.get('coords')[0]; let lon = feature.get('coords')[1]; let isPort = feature.get('type') === 'port';
                 
+                const modal = document.getElementById('mainModal');
+                document.getElementById('modalTitle').innerHTML = `<i class="fas ${isPort ? 'fa-ship' : 'fa-truck-moving'}"></i> ${feature.get('name')}`;
+                document.getElementById('modalBodyContent').innerHTML = `<div style="width:100%; display:flex; justify-content:center; align-items:center; flex-direction:column; padding: 40px;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#002b5e; margin-bottom:15px;"></i><b style="color:#555;">Canlı Veri Ağına Bağlanılıyor...</b></div>`;
+                modal.classList.add('active');
+
                 if (isPort) {
-                    document.getElementById('portModalBody').innerHTML = `
+                    document.getElementById('modalBodyContent').innerHTML = `
                         <div class="modal-left-iframe">
                             <iframe class="mt-frame" src="https://www.marinetraffic.com/en/ais/embed/zoom:13/centery:${lat}/centerx:${lon}/maptype:1/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false"></iframe>
                         </div>
                         <div class="modal-right-data">
-                            <h3 style="margin-top:0; color:#002b5e; font-family:'Montserrat'; border-bottom:2px solid #eee; padding-bottom:10px;">Terminal Kapasitesi</h3>
-                            <div class="data-grid">
-                                <div class="data-card"><span>Maksimum Kapasite</span><strong>${m.cap1}</strong></div>
-                                <div class="data-card"><span>Terminal Derinliği (Draft)</span><strong>${m.cap2}</strong></div>
-                            </div>
-                            <div class="weather-banner">${weatherHtml}</div>
-                            <a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Kapasite Kaynağı: ${m.sName}</a>
+                            <div class="data-card"><span>Maksimum Kapasite</span><strong>${m.cap1}</strong></div>
+                            <div class="data-card"><span>Terminal Derinliği</span><strong>${m.cap2}</strong></div>
+                            <a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Resmi Kaynak: ${m.sName}</a>
                         </div>
                     `;
                 } else {
-                    document.getElementById('portModalBody').innerHTML = `
+                    document.getElementById('modalBodyContent').innerHTML = `
                         <div class="modal-right-data" style="width:100%;">
-                            <h3 style="margin-top:0; color:#002b5e; font-family:'Montserrat'; border-bottom:2px solid #eee; padding-bottom:10px;">Gümrük Geçiş Durumu</h3>
-                            <div class="data-grid">
-                                <div class="data-card"><span>Gümrük İşlem Süresi</span><strong>${m.cap1}</strong></div>
-                                <div class="data-card"><span>Tır Parkı Doluluk</span><strong>${m.cap2}</strong></div>
-                            </div>
-                            <div class="weather-banner">${weatherHtml}</div>
+                            <div class="data-card"><span>Gümrük İşlem Süresi</span><strong>${m.cap1}</strong></div>
+                            <div class="data-card"><span>Tır Parkı Doluluk</span><strong>${m.cap2}</strong></div>
                             <a href="${m.sLink}" target="_blank" class="source-btn"><i class="fas fa-link"></i> Canlı Gümrük: ${m.sName}</a>
                         </div>
                     `;
@@ -330,12 +413,10 @@
         });
         map.on('pointermove', function(e) { map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(e.originalEvent)) ? 'pointer' : ''; });
 
-        // --- ROTA PLANLAYICI (MODAL İÇİNDE) ---
+        // --- ROTA PLANLAYICI VE CO2 HESABI (YENİ) ---
         const geoDataDict = {
             'TR': [{ id: 'Samsun', name: 'Samsun' }, { id: 'Istanbul', name: 'İstanbul' }],
-            'BG': [{ id: 'Varna', name: 'Varna' }, { id: 'Burgaz', name: 'Burgaz' }],
-            'RO': [{ id: 'Kostence', name: 'Köstence' }],
-            'GE': [{ id: 'Batum', name: 'Batum' }, { id: 'Poti', name: 'Poti' }]
+            'BG': [{ id: 'Varna', name: 'Varna' }], 'RO': [{ id: 'Kostence', name: 'Köstence' }], 'GE': [{ id: 'Batum', name: 'Batum' }]
         };
         function updateCities(type) {
             const cCode = document.getElementById(type + 'Country').value;
@@ -346,18 +427,25 @@
             geoDataDict[cCode].forEach(c => { cSel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
         }
         
-        // Dinamik Çizim İçin Ek Katman
-        const dynamicRouteSource = new ol.source.Vector();
-        map.addLayer(new ol.layer.Vector({ source: dynamicRouteSource, zIndex: 20 }));
-        const highlightStyle = new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#22c55e', width: 6, lineDash: [15, 15] }) });
-
         function hesaplaCanliRota() {
-            // Görsel olarak sonuç verir, haritada analiz tamamlandı mesajı çıkar
-            document.getElementById('routeResult').style.display = 'block';
-            document.getElementById('routeResult').innerHTML = `<b><i class="fas fa-check-circle"></i> Analiz Tamamlandı</b><br><br>Sistemimiz güzergah analizini yaptı. Optimum rotaları ana harita üzerinde inceleyebilirsiniz.`;
+            const weight = parseFloat(document.getElementById('cargoWeight').value) || 0;
+            if(weight <= 0) { alert("Lütfen geçerli bir ağırlık girin."); return; }
             
-            // İsteğe bağlı: Modal kapanınca harita odaklansın
-            setTimeout(() => { closeRouteModal(); }, 2500);
+            // Yeşil Lojistik CO2 Algoritması (Basitleştirilmiş simülasyon)
+            // Denizyolu karayoluna göre yaklaşık %60 daha az karbon salınımı yapar.
+            let co2HTML = "";
+            if(weight > 100) {
+                // Büyük tonaj = Denizyolu avantajı
+                let co2 = (weight * 0.015).toFixed(1); 
+                co2HTML = `<div class="co2-box"><i class="fas fa-leaf" style="color:#22c55e;"></i> Denizyolu Tavsiyesi: ${co2} Ton CO2 (Yeşil Lojistik Hedefiyle Uyumlu)</div>`;
+            } else {
+                // Karayolu
+                let co2 = (weight * 0.045).toFixed(1);
+                co2HTML = `<div class="co2-box" style="border-color:#fca5a5; color:#dc2626; background:#fef2f2;"><i class="fas fa-smog"></i> Karayolu Salınımı: ${co2} Ton CO2 (İntermodal Düşünülebilir)</div>`;
+            }
+
+            document.getElementById('routeResult').style.display = 'block';
+            document.getElementById('routeResult').innerHTML = `<b><i class="fas fa-check-circle"></i> Analiz Tamamlandı</b><br><br>Optimum transit rota harita üzerinde mavi ve turuncu akış ile gösterilmektedir.${co2HTML}`;
         }
 
         // --- CHATBOT ---
