@@ -2,32 +2,29 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>BSB-LOGINET | Stratejik Lojistik</title>
+    <title>BSB-LOGINET - Lojistik Ağı</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css">
     <style>
-        body { margin: 0; padding: 0; font-family: sans-serif; }
-        #map { width: 100vw; height: 100vh; }
-        .overlay { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; }
+        #map { height: 100vh; width: 100vw; }
     </style>
 </head>
 <body>
-    <div class="overlay">
-        <h2 style="color: #003366; margin: 0;">BSB-LOGINET</h2>
-        <p>Karadeniz Lojistik Ağı</p>
-    </div>
     <div id="map"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
-        // Harita kurulumu
+        // Haritayı tanımla
         const map = new ol.Map({
             target: 'map',
             layers: [
-                new ol.layer.Tile({ source: new ol.source.OSM() })
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([36.0, 42.5]),
-                zoom: 6
+                center: ol.proj.fromLonLat([36.0, 42.5]), // Karadeniz merkezi
+                zoom: 7
             })
         });
     </script>
