@@ -140,7 +140,7 @@
         .filter-row { display: flex; gap: 10px; margin-bottom: 15px; background: #f8fafc !important; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0 !important; }
         .btn-calc { width: 100%; background: var(--secondary) !important; color: #ffffff !important; border: none; padding: 15px; border-radius: 8px; font-weight: 700; font-family: 'Montserrat'; cursor: pointer; margin-top: 10px; font-size: 15px; }
 
-        /* --- YENİ NESİL AÇIK TEMA NAVİGASYON (LIGHT MODE) --- */
+        /* AÇIK TEMA GPS NAVİGASYONU */
         .nav-app-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f8fafc; z-index: 9999; display: flex; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); flex-direction: row; font-family: 'Inter', sans-serif; color: #1e293b; }
         .nav-app-modal.active { transform: translateY(0); }
         .nav-sidebar { width: 420px; background: #ffffff; display: flex; flex-direction: column; border-right: 1px solid #cbd5e1; box-shadow: 5px 0 25px rgba(0,0,0,0.1); z-index: 10; flex-shrink: 0;}
@@ -167,7 +167,6 @@
         .nav-step-content b { display: block; font-size: 14px; color: #1e293b; margin-bottom: 6px; line-height: 1.4; font-weight: 700; }
         .nav-step-content span { font-size: 12px; color: #64748b; font-weight: 600; }
         
-        /* MOBİL KESİLME HATASI DÜZELTİLDİ (Margin eklendi) */
         .start-nav-btn { margin: 25px; background: #22c55e; color: white; border: none; padding: 18px; border-radius: 10px; font-size: 16px; font-weight: 800; font-family: 'Montserrat'; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 12px; transition: 0.3s; box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3); text-transform: uppercase; letter-spacing: 1px; }
         .start-nav-btn:hover { background: #16a34a; transform: translateY(-3px); box-shadow: 0 12px 25px rgba(34, 197, 94, 0.4); }
         
@@ -219,7 +218,6 @@
             .layer-chips { top: 10px; left: 10px; right: auto; justify-content: flex-start; max-width: 60%; }
             .layer-chip { padding: 5px 10px; font-size: 10px; border-width: 1px !important; }
 
-            /* MOBİLDE BUTON KESİLME HATASINI ÖNLEYEN KOD */
             .nav-app-modal { flex-direction: column; }
             .nav-sidebar { width: 100%; height: 50vh; order: 2; border-right: none; border-top: 2px solid #0ea5e9; overflow-y: scroll; padding-bottom: env(safe-area-inset-bottom, 50px); }
             .nav-map-area { height: 50vh; order: 1; flex-grow: 0; }
@@ -229,7 +227,7 @@
             .nav-stat-box { padding: 10px; }
             .nav-stat-box span { font-size: 16px; }
             .nav-hud { top: 10px; left: 10px; padding: 8px 12px; font-size: 11px; }
-            .start-nav-btn { margin-bottom: 60px; } /* Butonu yukarı iter */
+            .start-nav-btn { margin-bottom: 60px; } 
         }
     </style>
 </head>
@@ -437,11 +435,10 @@
                     </div>
                 </div>
             </div>
-            <div class="nav-steps-container" id="navSteps">
-                </div>
+            <div class="nav-steps-container" id="navSteps"></div>
             
-            <button class="start-nav-btn" onclick="startNavigationSimulation()" id="startDriveBtn">
-                <i class="fas fa-location-arrow"></i> Sürüşü Başlat
+            <button class="start-nav-btn" onclick="startRealNavigation()" id="startDriveBtn">
+                <i class="fas fa-location-arrow"></i> Sürüşü Başlat (GPS)
             </button>
         </div>
         <div class="nav-map-area">
@@ -459,7 +456,7 @@
         function closeRouteModal() { document.getElementById('routeModal').classList.remove('active'); }
         function closeMainModal() { document.getElementById('mainModal').classList.remove('active'); document.getElementById('modalBodyContent').innerHTML='';}
 
-        // --- ANA HARİTA KURULUMU ---
+        // --- ANA HARİTA KURULUMU (TAMİR EDİLDİ - ÇÖKME YOK) ---
         const bsbExtent = ol.proj.transformExtent([22.0, 39.0, 47.0, 48.0], 'EPSG:4326', 'EPSG:3857');
         const map = new ol.Map({
             target: 'map',
@@ -499,13 +496,9 @@
         let navMapObject = null;
         const navRouteSource = new ol.source.Vector();
         const navPoiSource = new ol.source.Vector();
-        const carSource = new ol.source.Vector(); // Hareketli tır için
-        let rawRouteCoords = []; // Animasyon için koordinatlar
-        
-        // Araç animasyonu değişkenleri
-        let isSimulating = false;
-        let simIndex = 0;
+        const carSource = new ol.source.Vector();
         let carFeature = null;
+        let geoWatchId = null; // Gerçek GPS takip ID'si
 
         function initNavMap() {
             if (navMapObject) return; 
@@ -517,7 +510,6 @@
             const navPoiLayer = new ol.layer.Vector({ source: navPoiSource, zIndex: 25 });
             const carLayer = new ol.layer.Vector({ source: carSource, zIndex: 30 });
 
-            // AÇIK TEMALI HARİTA (Voyager)
             const lightTile = new ol.layer.Tile({
                 source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' })
             });
@@ -532,21 +524,23 @@
         function closeNavApp() {
             document.getElementById('navAppModal').classList.remove('active');
             navRouteSource.clear(); navPoiSource.clear(); carSource.clear();
-            isSimulating = false;
-            document.getElementById('startDriveBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Sürüşü Başlat';
+            
+            // Gerçek GPS takibini durdur
+            if(geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+            document.getElementById('startDriveBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Sürüşü Başlat (GPS)';
+            carFeature = null;
         }
 
         // AKILLI POI JENERATÖRÜ (Rotaya Radar, Kantar ve Tesis Döşer)
         function generatePOIsForRoute(coordsArray) {
             navPoiSource.clear();
             const poiTypes = [
-                { icon: '\uf017', color: '#e74c3c', text: 'Radar 70' }, // clock (radar)
-                { icon: '\uf54b', color: '#f59e0b', text: 'Kantar' },   // weight
-                { icon: '\uf0f4', color: '#3b82f6', text: 'Tesis' },    // coffee
-                { icon: '\uf540', color: '#8b5cf6', text: 'TIR Parkı' } // truck park
+                { icon: '\uf017', color: '#e74c3c', text: 'Radar 70' }, 
+                { icon: '\uf54b', color: '#f59e0b', text: 'Kantar' },   
+                { icon: '\uf0f4', color: '#3b82f6', text: 'Tesis' },    
+                { icon: '\uf540', color: '#8b5cf6', text: 'TIR Parkı' } 
             ];
             
-            // Rotanın uzunluğuna göre her 150-200 koordinatta bir kontrol noktası atar
             for(let i = 100; i < coordsArray.length; i += 180) {
                 let type = poiTypes[Math.floor(Math.random() * poiTypes.length)];
                 let f = new ol.Feature(new ol.geom.Point(coordsArray[i]));
@@ -556,8 +550,7 @@
                         font: '900 14px "Font Awesome 6 Free"',
                         fill: new ol.style.Fill({color: type.color}),
                         stroke: new ol.style.Stroke({color: '#ffffff', width: 3}),
-                        offsetY: -15,
-                        textAlign: 'center'
+                        offsetY: -15, textAlign: 'center'
                     })
                 }));
                 navPoiSource.addFeature(f);
@@ -640,9 +633,8 @@
                     navRouteSource.clear(); 
                     navRouteSource.addFeature(routeFeature); 
 
-                    // Simülasyon için koordinatları kaydet ve POI ekle
-                    rawRouteCoords = routeFeature.getGeometry().getCoordinates();
-                    generatePOIsForRoute(rawRouteCoords);
+                    // POI ekle
+                    generatePOIsForRoute(routeFeature.getGeometry().getCoordinates());
                     
                     setTimeout(() => {
                         navMapObject.updateSize();
@@ -658,20 +650,18 @@
             }
         }
 
-        // SÜRÜŞ SİMÜLASYONU MANTIĞI
-        function startNavigationSimulation() {
-            if(rawRouteCoords.length === 0 || isSimulating) return;
-            isSimulating = true;
-            simIndex = 0;
-            
-            document.getElementById('startDriveBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sürüş Devam Ediyor...';
-            
-            // Haritayı yakınlaştır
-            navMapObject.getView().setZoom(16);
-            
-            // Tır/Araç ikonunu yarat
+        // --- YENİ EKLENEN: GERÇEK HTML5 GPS TAKİBİ ---
+        function startRealNavigation() {
+            if (!navigator.geolocation) {
+                alert("Tarayıcınız GPS özelliğini desteklemiyor.");
+                return;
+            }
+
+            const btn = document.getElementById('startDriveBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uydu Bağlantısı Kuruluyor...';
+
             if(!carFeature) {
-                carFeature = new ol.Feature(new ol.geom.Point(rawRouteCoords[0]));
+                carFeature = new ol.Feature();
                 carFeature.setStyle(new ol.style.Style({
                     text: new ol.style.Text({
                         text: '\uf124', // FontAwesome Location Arrow
@@ -684,33 +674,39 @@
                 carSource.addFeature(carFeature);
             }
 
-            simulateDrive();
-        }
+            // Haritayı sürüş moduna yakınlaştır
+            navMapObject.getView().setZoom(17);
 
-        function simulateDrive() {
-            if(!isSimulating || simIndex >= rawRouteCoords.length - 1) {
-                document.getElementById('startDriveBtn').innerHTML = '<i class="fas fa-flag-checkered"></i> Hedefe Ulaşıldı';
-                isSimulating = false;
-                return;
-            }
-            
-            const start = rawRouteCoords[simIndex];
-            const end = rawRouteCoords[simIndex + 1];
-            
-            // Aracın yönünü hesaplama (Radyan)
-            const dx = end[0] - start[0];
-            const dy = end[1] - start[1];
-            const rotation = Math.atan2(dx, dy); 
-
-            // İkonu ilerlet ve döndür
-            carFeature.getGeometry().setCoordinates(end);
-            carFeature.getStyle().getText().setRotation(rotation);
-            
-            // Harita kamerasını aracın üzerine kilitle (Google Maps gibi)
-            navMapObject.getView().setCenter(end);
-            
-            simIndex += 2; // Hızı belirler (1 = yavaş, 2 = orta)
-            setTimeout(simulateDrive, 80); // Animasyon akıcılığı
+            // Gerçek cihaz konumunu anlık takip etmeye başla
+            geoWatchId = navigator.geolocation.watchPosition(
+                function(position) {
+                    btn.innerHTML = '<i class="fas fa-satellite"></i> Sürüş Devam Ediyor (Canlı)';
+                    
+                    const lon = position.coords.longitude;
+                    const lat = position.coords.latitude;
+                    const olCoords = ol.proj.fromLonLat([lon, lat]);
+                    
+                    // Oku bulunduğun konuma koy
+                    carFeature.setGeometry(new ol.geom.Point(olCoords));
+                    
+                    // Telefonun pusulası (heading) varsa oku o yöne çevir
+                    if(position.coords.heading !== null && !isNaN(position.coords.heading)) {
+                        carFeature.getStyle().getText().setRotation(position.coords.heading * Math.PI / 180);
+                    }
+                    
+                    // Harita kamerasını daima senin üzerinde tut (Google Maps stili)
+                    navMapObject.getView().setCenter(olCoords);
+                },
+                function(error) {
+                    alert("GPS Hatası: Telefonunuzun konum erişimi kapalı olabilir.");
+                    btn.innerHTML = '<i class="fas fa-location-arrow"></i> Sürüşü Başlat (GPS)';
+                },
+                {
+                    enableHighAccuracy: true, // En yüksek GPS hassasiyeti
+                    maximumAge: 0,
+                    timeout: 10000
+                }
+            );
         }
 
     </script>
