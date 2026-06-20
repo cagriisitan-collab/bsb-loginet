@@ -527,12 +527,12 @@
             source: dynamicRouteSource,
             style: new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: '#8b5cf6', // Belirgin mor renk
+                    color: '#8b5cf6', 
                     width: 6,
                     lineDash: [12, 12]
                 })
             }),
-            zIndex: 20 // Haritadaki en üst katman
+            zIndex: 20 
         });
         map.addLayer(dynamicRouteLayer);
 
@@ -620,7 +620,7 @@
             }
         });
 
-        // --- YENİ: OPEN ROUTESERVICE API İLE CANLI ROTA ÇİZİMİ ---
+        // --- OPEN ROUTESERVICE API İLE CANLI ROTA ÇİZİMİ ---
         const geoDataDict = { 
             'TR': [{ id: 'Samsun', name: 'Samsun', lon: 36.33, lat: 41.28 }, { id: 'Istanbul', name: 'İstanbul', lon: 28.97, lat: 41.00 }], 
             'BG': [{ id: 'Varna', name: 'Varna', lon: 27.91, lat: 43.21 }, { id: 'Burgas', name: 'Burgaz', lon: 27.46, lat: 42.50 }], 
@@ -651,21 +651,18 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> API ile Çiziliyor...';
             btn.disabled = true;
 
-            // DİKKAT: Buraya OpenRouteService'den alacağınız API Anahtarını yazmalısınız.
-            // Ücretsiz anahtar almak için: https://openrouteservice.org/
-            const ORS_API_KEY = "YOUR_ORS_API_KEY_HERE"; 
+            // API ANAHTARINIZ BURAYA ENTEGRE EDİLDİ
+            const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjM2N2M4ZjdlNDE0NTRhZjFhOGM1YmY5M2M4Zjc4YjRmIiwiaCI6Im11cm11cjY0In0="; 
 
             try {
-                // Tır/Kamyon (Heavy Goods Vehicle) profiline göre rota çekiyoruz
                 const response = await fetch(`https://api.openrouteservice.org/v2/directions/driving-hgv?api_key=${ORS_API_KEY}&start=${oLon},${oLat}&end=${dLon},${dLat}`);
                 
                 if (!response.ok) {
-                    throw new Error("Lütfen kod içerisine kendi ORS API anahtarınızı ekleyin.");
+                    throw new Error("API Bağlantısı Reddedildi. Anahtarınızı kontrol edin.");
                 }
 
                 const data = await response.json();
                 
-                // Rotayı haritada çizme
                 if(data.features && data.features.length > 0) {
                     const format = new ol.format.GeoJSON();
                     const routeFeature = format.readFeature(data.features[0], {
@@ -673,21 +670,17 @@
                         featureProjection: 'EPSG:3857'
                     });
                     
-                    dynamicRouteSource.clear(); // Eski rotayı temizle
-                    dynamicRouteSource.addFeature(routeFeature); // Yeni rotayı ekle
+                    dynamicRouteSource.clear(); 
+                    dynamicRouteSource.addFeature(routeFeature); 
                     
-                    // Modalı kapatıp haritayı rotaya odakla
                     closeRouteModal();
                     window.scrollTo(0,0);
                     map.getView().fit(dynamicRouteSource.getExtent(), { padding: [100, 100, 100, 100], duration: 1500 });
                 }
 
-                // CO2 Hesaplama
                 const distanceKm = data.features[0].properties.segments[0].distance / 1000;
-                const co2Land = (weight * distanceKm * 62) / 1000000; // Ton
+                const co2Land = (weight * distanceKm * 62) / 1000000; 
                 
-                // Bilgi Kartını Haritanın üzerine basabiliriz veya console'a yazabiliriz
-                console.log(`Mesafe: ${distanceKm.toFixed(2)} KM | CO2: ${co2Land.toFixed(2)} Ton`);
                 alert(`Optimum Karayolu Rotası Çizildi!\nMesafe: ${distanceKm.toFixed(2)} KM\nCO2 Salınımı: ${co2Land.toFixed(2)} Ton`);
 
             } catch (error) {
@@ -721,7 +714,7 @@
             requestAnimationFrame(animation);
         }
 
-        // --- CANLI HAVA DURUMU ÇEKME (Open-Meteo API) ---
+        // --- CANLI HAVA DURUMU ÇEKME ---
         async function fetchMarineWeather() {
             try {
                 const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.28&longitude=36.33&current_weather=true&windspeed_unit=kmh');
