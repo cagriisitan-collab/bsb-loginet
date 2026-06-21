@@ -42,7 +42,6 @@
         .layer-chips { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; z-index: 10; flex-wrap: wrap; justify-content: flex-end; max-width: 80%; }
         .layer-chip { background: #ffffff !important; border: 2px solid #cbd5e1 !important; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #002b5e !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; font-family: 'Montserrat', sans-serif; user-select: none; }
         .layer-chip.active { border-color: #ff6600 !important; color: #ff6600 !important; box-shadow: 0 4px 15px rgba(255,102,0,0.2); }
-        .layer-chip input { display: none; } 
 
         .weather-widget { position: absolute; bottom: 20px; left: 20px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 10; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0; width: 220px; }
         .weather-title { font-family: 'Montserrat'; font-weight: 800; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; display: flex; align-items: center; gap: 5px; }
@@ -115,7 +114,7 @@
         .eu-project-footer { background: #003399 !important; color: #ffffff !important; padding: 30px; border-radius: 16px; margin-top: 20px; display: flex; align-items: center; gap: 30px; box-shadow: 0 10px 30px rgba(0,51,153,0.15); }
         .eu-flag-box { background: #ffffff !important; padding: 10px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-        /* MODALLAR */
+        /* MODALLAR VE POPUPLAR */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 43, 94, 0.7); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 15px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-box { background: #ffffff !important; width: 100%; max-width: 900px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); overflow: hidden; transform: scale(0.9); transition: 0.3s; display: flex; flex-direction: column; max-height: 90vh; }
@@ -148,8 +147,6 @@
         .nav-stat-box { background: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; justify-content: center; }
         .nav-stat-box label { font-size: 11px; text-transform: uppercase; color: #64748b; margin-bottom: 5px; font-weight: 700; }
         .nav-stat-box span { font-size: 20px; font-weight: 800; color: #0f172a; font-family: 'Montserrat'; }
-        .nav-stat-box.highlight { border-color: #4ade80; background: #f0fdf4; }
-        .nav-stat-box.highlight span { color: #16a34a; }
         
         .nav-steps-container { flex-grow: 1; overflow-y: auto; padding: 25px; }
         .nav-step { display: flex; gap: 15px; margin-bottom: 25px; position: relative; }
@@ -158,7 +155,6 @@
         .nav-step-icon { width: 38px; height: 38px; border-radius: 50%; background: #0ea5e9; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 2; position: relative; flex-shrink: 0; }
         .nav-step-content { background: #ffffff; padding: 15px; border-radius: 10px; flex-grow: 1; border: 1px solid #e2e8f0; }
         .nav-step-content b { display: block; font-size: 14px; color: #1e293b; margin-bottom: 4px; font-weight: 700; }
-        .nav-step-content span { font-size: 12px; color: #64748b; }
         
         .start-nav-btn { margin: 25px; background: #22c55e; color: white; border: none; padding: 18px; border-radius: 10px; font-size: 16px; font-weight: 800; font-family: 'Montserrat'; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 12px; text-transform: uppercase; }
         
@@ -201,7 +197,6 @@
 </head>
 <body>
 
-    <!-- 0. TICKER -->
     <div class="ticker-wrap">
         <div class="ticker-title">SON DAKİKA</div>
         <div class="ticker-content" id="newsTicker">
@@ -212,7 +207,6 @@
         </div>
     </div>
 
-    <!-- 1. HEADER -->
     <header class="header">
         <div class="logo-container">
             <i class="fas fa-globe-europe" style="font-size: 28px; color: var(--primary);"></i>
@@ -227,7 +221,6 @@
         </nav>
     </header>
 
-    <!-- 2. HERO MAP & PANEL SECTION -->
     <section class="hero-section">
         <div class="map-container">
             <div class="layer-chips">
@@ -259,7 +252,6 @@
         </div>
     </section>
 
-    <!-- 3. PROJECT SHOWCASE -->
     <section class="project-showcase" id="showcase">
         <div class="hackathon-banner">
             <div class="hack-info">
@@ -339,7 +331,6 @@
         </div>
     </section>
 
-    <!-- MOBİL ALT MENÜ -->
     <nav class="mobile-nav">
         <button onclick="window.scrollTo(0,0);"><i class="fas fa-map-marked-alt"></i>Harita</button>
         <button onclick="openRouteModal()"><i class="fas fa-route"></i>Rota</button>
@@ -348,7 +339,6 @@
         <button onclick="openPanel('chatPanel')"><i class="fas fa-robot"></i>Asistan</button>
     </nav>
 
-    <!-- MODAL 1: ROTA PLANLAYICI -->
     <div class="modal-overlay" id="routeModal">
         <div class="modal-box" style="max-width: 550px;">
             <div class="modal-header">
@@ -387,7 +377,6 @@
         </div>
     </div>
 
-    <!-- MODAL 2: DETAY & MARINETRAFFIC POPUP -->
     <div class="modal-overlay" id="mainModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -398,7 +387,6 @@
         </div>
     </div>
 
-    <!-- MODAL 3: FİRMA REHBERİ -->
     <div class="modal-overlay" id="directoryModal">
         <div class="modal-box" style="max-width: 700px;">
             <div class="modal-header">
@@ -427,7 +415,6 @@
         </div>
     </div>
 
-    <!-- MODAL 4: KÜTÜPHANE -->
     <div class="modal-overlay" id="libraryModal">
         <div class="modal-box" style="max-width: 600px;">
             <div class="modal-header">
@@ -443,7 +430,6 @@
         </div>
     </div>
 
-    <!-- MEGA ULTRA PRO NAVİGASYON UYGULAMASI (LIGHT MODE SEKMESİ) -->
     <div class="nav-app-modal" id="navAppModal">
         <div class="nav-sidebar">
             <div class="nav-header">
@@ -468,7 +454,7 @@
         </div>
     </div>
 
-    <!-- KONTROL PANELLERİ VE HARİTA MOTORU -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script>
         // UX YÖNETİMİ
         function openPanel(id) { if(id==='chatPanel') document.getElementById('chatPanel').classList.add('mobile-open'); }
@@ -482,7 +468,7 @@
         function closeDirectoryModal() { document.getElementById('directoryModal').classList.remove('active'); }
         function closeCompanyCard() { document.getElementById('companyCardModal').classList.remove('active'); }
 
-        // FİRMA VERİTABANI
+        // FİRMA VERİTABANI VE LİSTELEME
         const firmsDatabase = [
             { id: 1, name: "Samsun Global Logistics A.Ş.", country: "TR", type: "Denizyolu", phone: "+90 362 111 2233", email: "ops@samsunglobal.com.tr", cap: "150 Konteyner / Ay", lanes: ["TR-BG", "TR-GE"] },
             { id: 2, name: "Karadeniz Transit Express", country: "TR", type: "Karayolu", phone: "+90 362 555 4433", email: "b2b@karadeniztransit.com", cap: "45 Frigo Tır", lanes: ["TR-GE"] },
@@ -504,11 +490,13 @@
             renderDirectoryList(firmsDatabase.filter(f => f.name.toLowerCase().includes(s) && (c === "" || f.country === c)));
         }
 
-        // ANA HARİTA ALTYAPISI VE EKSİKSİZ KOORDİNATLAR (ÇÖKME ÖNLENDİ)
+        // ANA HARİTA ALTYAPISI (ÇÖKME ÖNLENDİ, SAĞLAMLAŞTIRILDI)
         const bsbExtent = ol.proj.transformExtent([22.0, 39.0, 47.0, 48.0], 'EPSG:4326', 'EPSG:3857');
+        
+        // En sağlam ve güncel Tile URL'si eklendi (Mavi ekran sorununu tamamen çözer)
         const map = new ol.Map({
             target: 'map',
-            layers: [ new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' }) }) ],
+            layers: [ new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' }) }) ],
             view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.0]), zoom: 6, minZoom: 5, maxZoom: 10, extent: bsbExtent })
         });
 
@@ -529,7 +517,7 @@
             { type: 'sea', coords: [[36.33, 41.28], [28.65, 44.15]] }
         ];
         
-        // HATA BURADAYDI, EKLENDİ!
+        // EKSİK DEMİRYOLU DEĞİŞKENİ GERİ EKLENDİ (Haritayı bozan şey buydu)
         const railData = [ 
             [[36.33, 41.28], [35.83, 40.65], [32.85, 39.92], [29.00, 41.00], [26.36, 41.71]], 
             [[27.91, 43.21], [25.00, 43.00], [23.32, 42.69]], 
@@ -539,15 +527,17 @@
         routesData.forEach(r => { const f = new ol.Feature({ geometry: new ol.geom.LineString(r.coords.map(c => ol.proj.fromLonLat(c))) }); if(r.type === 'land') { f.setStyle(landStyle); landSource.addFeature(f); } else { f.setStyle(seaStyle); seaSource.addFeature(f); } });
         railData.forEach(c => { const f = new ol.Feature({ geometry: new ol.geom.LineString(c.map(p => ol.proj.fromLonLat(p))) }); f.setStyle(railStyle); railSource.addFeature(f); });
 
+        // HARİTA ANİMASYONU PÜRÜZSÜZ HALE GETİRİLDİ (Layer yerine Source tetikleniyor)
         let dashOffset = 0;
-        // MOBİL PERFORMANS İÇİN SETINTERVAL KULLANILDI
-        setInterval(() => { 
-            dashOffset -= 1; 
+        function animateFlow() { 
+            dashOffset -= 0.6; 
             landStyle.getStroke().setLineDashOffset(dashOffset); 
             seaStyle.getStroke().setLineDashOffset(dashOffset / 1.5); 
             railStyle.getStroke().setLineDashOffset(-dashOffset); 
-            landLayer.changed(); seaLayer.changed(); railLayer.changed(); 
-        }, 80);
+            landSource.changed(); seaSource.changed(); railSource.changed(); 
+            requestAnimationFrame(animateFlow); 
+        }
+        animateFlow();
 
         // MARKER SİSTEMİ VE MARINETRAFFIC POPUP YÖNETİMİ
         const markerSource = new ol.source.Vector(); map.addLayer(new ol.layer.Vector({ source: markerSource, zIndex: 10 }));
@@ -579,6 +569,7 @@
         addMarker(41.45, 41.40, "Kemalpaşa TIR Parkı", 'park', { cap1: "500 Tır Kapasite", cap2: "Sarp Bekleme Alanı", sLink: "#" });
         addMarker(26.38, 41.70, "Kapıkule TIR Parkı", 'park', { cap1: "1000 Tır Kapasite", cap2: "Akıllı Sıra Sistemi", sLink: "#" });
 
+        // TIKLAMA VE MARINETRAFFIC POPUP YÖNETİMİ
         map.on('singleclick', function(evt) {
             let feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
             if (feature && feature.get('meta')) {
@@ -595,7 +586,13 @@
             }
         });
 
-        // MEVCUT KONUMU KULLAN MANTIĞI
+        function toggleLayers() {
+            const isLand = document.getElementById('chkLand').checked; const isSea = document.getElementById('chkSea').checked; const isRail = document.getElementById('chkRail').checked;
+            landLayer.setVisible(isLand); seaLayer.setVisible(isSea); railLayer.setVisible(isRail);
+            document.getElementById('lblLand').className = isLand ? "layer-chip active" : "layer-chip"; document.getElementById('lblSea').className = isSea ? "layer-chip active" : "layer-chip"; document.getElementById('lblRail').className = isRail ? "layer-chip active" : "layer-chip";
+        }
+
+        // MEVCUT KONUMU KULLAN (GPS)
         let useGpsFlag = false; let gpsCoords = null;
         function useGPS() {
             const btn = document.getElementById('gpsBtn');
@@ -605,7 +602,7 @@
                 btn.style.background = '#e0f2fe'; btn.style.color = '#0ea5e9';
                 document.getElementById('originCountry').disabled = false; return;
             }
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Konum Alınıyor...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Konum Bulunuyor...';
             navigator.geolocation.getCurrentPosition(function(pos) {
                 useGpsFlag = true; gpsCoords = [pos.coords.longitude, pos.coords.latitude];
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> GPS Aktif (İptal İçin Tıkla)';
@@ -626,10 +623,10 @@
 
         function initNavMap() {
             if (navMapObject) return;
-            const routeLayer = new ol.layer.Vector({ source: navRouteSource, style: new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#8b5cf6', width: 6, lineCap: 'round' }) }), zIndex: 20 });
-            const poiLayer = new ol.layer.Vector({ source: navPoiSource, zIndex: 25 });
+            const routeLayer = new ol.layer.Vector({ source: navRouteSource, style: new ol.style.Style({ stroke: new ol.style.Stroke({ color: '#8b5cf6', width: 6, lineCap: 'round' }) }) });
+            const poiLayer = new ol.layer.Vector({ source: navPoiSource });
             const carLayer = new ol.layer.Vector({ source: carSource, zIndex: 30 });
-            navMapObject = new ol.Map({ target: 'navMapContainer', layers: [new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' }) }), routeLayer, poiLayer, carLayer], view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.0]), zoom: 6 }) });
+            navMapObject = new ol.Map({ target: 'navMapContainer', layers: [new ol.layer.Tile({ source: new ol.source.XYZ({ url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' }) }), routeLayer, poiLayer, carLayer], view: new ol.View({ center: ol.proj.fromLonLat([34.0, 42.0]), zoom: 6 }) });
         }
 
         function closeNavApp() { document.getElementById('navAppModal').classList.remove('active'); navRouteSource.clear(); navPoiSource.clear(); carSource.clear(); if(geoWatchId) navigator.geolocation.clearWatch(geoWatchId); carFeature = null; }
@@ -638,7 +635,7 @@
             navPoiSource.clear(); const types = [{ icon: '\uf017', color: '#e74c3c', text: 'Radar 70' }, { icon: '\uf54b', color: '#f59e0b', text: 'Kantar' }, { icon: '\uf540', color: '#8b5cf6', text: 'TIR Parkı' }];
             for(let i = 50; i < coords.length; i += 150) {
                 let t = types[Math.floor(Math.random() * types.length)]; let f = new ol.Feature(new ol.geom.Point(coords[i]));
-                f.setStyle(new ol.style.Style({ text: new ol.style.Text({ text: t.icon + '\n' + t.text, font: '900 13px "Font Awesome 6 Free"', fill: new ol.style.Fill({color: t.color}), stroke: new ol.style.Stroke({color: '#fff', width: 3}), textAlign: 'center', offsetY: -15 }) }));
+                f.setStyle(new ol.style.Style({ text: new ol.style.Text({ text: t.icon + '\n' + t.text, font: '900 13px "Font Awesome 6 Free"', fill: new ol.style.Fill({color: t.color}), stroke: new ol.style.Stroke({color: '#fff', width: 3}), textAlign: 'center' }) }));
                 navPoiSource.addFeature(f);
             }
         }
