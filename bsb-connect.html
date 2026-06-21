@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BSB-Connect | Karadeniz Akıllı Lojistik Borsası</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root { --primary: #002b5e; --secondary: #ff6600; --bg: #f1f5f9; --border: #cbd5e1; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #1e293b; height: 100vh; overflow: hidden; }
+
+        /* GİRİŞ EKRANI (AUTH SCREEN) */
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--primary); background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 20px 20px; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: 0.4s; }
+        .auth-overlay.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+        .auth-card { background: white; width: 100%; max-width: 450px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 40px; text-align: center; margin: 15px; }
+        .auth-logo { font-family: 'Montserrat'; font-size: 26px; font-weight: 800; color: var(--primary); margin-bottom: 30px; }
+        .auth-logo span { color: var(--secondary); }
+        .auth-tabs { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; }
+        .auth-tab { flex: 1; padding: 10px; font-weight: 700; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .auth-tab.active { color: var(--primary); border-color: var(--secondary); }
+        .form-group { text-align: left; margin-bottom: 18px; }
+        .form-group label { font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px; text-transform: uppercase; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; font-size: 14px; background: #f8fafc; }
+        .form-input:focus { border-color: var(--primary); background: white; }
+        .auth-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-family: 'Montserrat'; cursor: pointer; font-size: 15px; transition: 0.2s; margin-top: 10px; }
+        .auth-btn:hover { background: var(--secondary); box-shadow: 0 5px 15px rgba(255,102,0,0.3); }
+
+        /* ANA PLATFORM DÜZENİ */
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+        .app-header { background: white; height: 70px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); flex-shrink: 0; }
+        .app-brand { font-family: 'Montserrat'; font-size: 22px; font-weight: 800; color: var(--primary); }
+        .app-brand span { color: var(--secondary); }
+        
+        .user-menu { display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: 600; }
+        .verified-badge { background: #dcfce7; color: #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+
+        .app-body { display: flex; flex-grow: 1; overflow: hidden; }
+        
+        /* SIDEBAR NAVİGASYON */
+        .app-sidebar { width: 260px; background: var(--primary); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-btn { background: none; border: none; color: #94a3b8; width: 100%; padding: 14px 15px; border-radius: 8px; text-align: left; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .sidebar-btn i { font-size: 16px; }
+        .sidebar-btn:hover, .sidebar-btn.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar-btn.active i { color: var(--secondary); }
+        .logout-btn { color: #f87171; }
+
+        /* ANA İÇERİK ALANI */
+        .main-content { flex-grow: 1; overflow-y: auto; padding: 30px; background: #f8fafc; }
+        .view-panel { display: none; }
+        .view-panel.active { display: block; }
+
+        .panel-title { font-family: 'Montserrat'; font-size: 22px; color: var(--primary); margin: 0 0 25px 0; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+
+        /* İLAN BORSASI TASARIMI */
+        .board-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .board-tab { background: white; border: 1px solid var(--border); padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; color: #475569; transition: 0.2s; }
+        .board-tab.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(255,102,0,0.2); }
+
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+        .ad-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
+        .ad-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); border-color: var(--secondary); }
+        .ad-route { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 700; font-family: 'Montserrat'; color: var(--primary); margin-bottom: 15px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; }
+        .ad-details { font-size: 13px; color: #475569; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .ad-details item { display: flex; justify-content: space-between; font-weight: 600; }
+        .ad-details item span { color: #94a3b8; font-weight: 500; }
+        .ad-company { font-size: 12px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+        .ad-company i { color: #16a34a; }
+        .connect-btn { width: 100%; background: #e0f2fe; color: #0ea5e9; border: 1px solid #bae6fd; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .connect-btn:hover { background: #0ea5e9; color: white; }
+
+        /* FORM TASARIMI */
+        .form-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 30px; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        .form-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; font-weight: 600; outline: none; }
+
+        /* MESSAGING SİSTEMİ */
+        .chat-container { display: flex; background: white; border: 1px solid var(--border); border-radius: 12px; height: calc(100vh - 170px); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .chat-channels { width: 300px; border-right: 1px solid var(--border); background: #f8fafc; overflow-y: auto; flex-shrink: 0; }
+        .channel-card { padding: 20px; border-bottom: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; }
+        .channel-card:hover, .channel-card.active { background: #ebd5e1; background-color: rgba(0,43,94,0.05); }
+        .channel-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Montserrat'; flex-shrink: 0; }
+        .channel-info h4 { margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: var(--primary); }
+        .channel-info p { margin: 0; font-size: 11px; color: #64748b; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .chat-main { flex-grow: 1; display: flex; flex-direction: column; background: #ffffff; }
+        .chat-window-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-family: 'Montserrat'; color: var(--primary); font-size: 15px; display: flex; align-items: center; gap: 10px; }
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 20px; background: #f1f5f9; display: flex; flex-direction: column; gap: 12px; }
+        .msg-balloon { padding: 12px 16px; border-radius: 12px; max-width: 70%; line-height: 1.4; font-size: 13px; font-weight: 500; }
+        .msg-balloon.received { background: white; border-bottom-left-radius: 0; align-self: flex-start; border: 1px solid #e2e8f0; color: #333; }
+        .msg-balloon.sent { background: #e0f2fe; color: var(--primary); border-bottom-right-radius: 0; align-self: flex-end; font-weight: 600; }
+        .chat-input-area { padding: 15px; border-top: 1px solid var(--border); display: flex; background: white; flex-shrink: 0; }
+        .chat-send-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; margin-left: 10px; cursor: pointer; font-weight: 700; }
+
+        /* MOBİL UYUM */
+        @media (max-width: 768px) {
+            .app-header { padding: 0 15px; }
+            .app-body { flex-direction: column; }
+            .app-sidebar { width: 100%; height: auto; padding: 10px; flex-direction: row; justify-content: space-around; border-bottom: 1px solid var(--border); }
+            .sidebar-menu { flex-direction: row; width: 100%; justify-content: space-around; gap: 0; }
+            .sidebar-btn { padding: 10px; font-size: 12px; width: auto; justify-content: center; flex-direction: column; text-align: center; gap: 4px; }
+            .sidebar-btn span { display: none; }
+            .logout-btn { display: none; }
+            .main-content { padding: 15px; height: calc(100vh - 140px); }
+            .chat-container { flex-direction: column; height: 100%; }
+            .chat-channels { width: 100%; height: 35%; border-right: none; border-bottom: 1px solid var(--border); }
+            .chat-main { height: 65%; }
+            .form-row { flex-direction: column; gap: 0; }
+            .board-tabs { flex-wrap: wrap; }
+            .board-tab { flex: 1; text-align: center; padding: 10px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-logo">BSB-<span>CONNECT</span></div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Firma Girişi</div>
+                <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Oda Kayıt Başvurusu</div>
+            </div>
+            
+            <div id="authFormContent">
+                <div class="form-group">
+                    <label>Resmi Kurumsal E-Posta</label>
+                    <input type="email" class="form-input" id="authEmail" placeholder="ops@samsunglobal.com.tr">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" class="form-input" id="authPass" placeholder="••••••••">
+                </div>
+                <button class="auth-btn" onclick="simulatedLogin()">Sisteme Güvenli Giriş Yap</button>
+                <p style="font-size:11px; color:#64748b; margin-top:15px; font-weight:600;"><i class="fas fa-shield-alt" style="color:#16a34a;"></i> Sadece Interreg NEXT Karadeniz Havzası tescilli ve Oda onaylı firmalar girebilir.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="app-brand">BSB-<span>CONNECT</span></div>
+            <div class="user-menu">
+                <div class="verified-badge"><i class="fas fa-check-circle"></i> <span id="headerCompName">Samsun TSO Kayıtlı Üye</span></div>
+                <i class="fas fa-user-building" style="font-size: 18px; color: var(--primary);"></i>
+            </div>
+        </header>
+
+        <div class="app-body">
+            <aside class="app-sidebar">
+                <div class="sidebar-menu">
+                    <button class="sidebar-btn active" id="btn-board" onclick="switchView('board')"><i class="fas fa-cubes"></i> <span>İlan Borsası</span></button>
+                    <button class="sidebar-btn" id="btn-post" onclick="switchView('post')"><i class="fas fa-plus-circle"></i> <span>Yeni İlan Yayınla</span></button>
+                    <button class="sidebar-btn" id="btn-chat" onclick="switchView('chat')"><i class="fas fa-comments"></i> <span>Mesaj Kutusu (<span id="msgCount">1</span>)</span></button>
+                </div>
+                <button class="sidebar-btn logout-btn" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Güvenli Çıkış</button>
+            </aside>
+
+            <main class="main-content">
+                
+                <section class="view-panel active" id="panel-board">
+                    <h3 class="panel-title"><i class="fas fa-shipping-fast" style="color:var(--secondary);"></i> Karadeniz Aktif Lojistik Borsası</h3>
+                    <div class="board-tabs">
+                        <div class="board-tab active" id="bt-freight" onclick="switchBoardFilter('freight')">Araç Arasın (Yük İlanları)</div>
+                        <div class="board-tab" id="bt-truck" onclick="switchBoardFilter('truck')">Dönüş Yükü Arasın (Boş Araçlar)</div>
+                    </div>
+                    <div class="grid-layout" id="adsGrid"></div>
+                </section>
+
+                <section class="view-panel" id="panel-post">
+                    <h3 class="panel-title"><i class="fas fa-plus-circle" style="color:var(--secondary);"></i> Yeni Navlun / Araç Bildirimi Girişi</h3>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>İlan Türü</label>
+                            <select id="insType" class="form-select">
+                                <option value="freight">Araç Arıyorum (Sistemdeki Boş Araçlar Bana Mesaj Atsın)</option>
+                                <option value="truck">Dönüş Yükü Arıyorum (Boş Tırım Mevcut, Yük Sahipleri Yazsın)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Çıkış Şehri / Ülkesi</label><input type="text" class="form-input" id="insOrigin" placeholder="Örn: Samsun, TR"></div>
+                            <div class="form-group"><label>Varış Şehri / Ülkesi</label><input type="text" class="form-input" id="insDest" placeholder="Örn: Varna, BG"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Kapasite / Ekipman / Tonaj</label><input type="text" class="form-input" id="insCargo" placeholder="Örn: Frigo TIR, 22 Ton, Isı Raporlu"></div>
+                            <div class="form-group"><label>Yükleme / Hazır Olma Tarihi</label><input type="date" class="form-input" id="insDate"></div>
+                        </div>
+                        <button class="auth-btn" onclick="submitNewAd()"><i class="fas fa-cloud-upload-alt"></i> İlanı Borsada Canlı Yayınla</button>
+                    </div>
+                </section>
+
+                <section class="view-panel" id="panel-chat">
+                    <h3 class="panel-title"><i class="fas fa-comments" style="color:var(--secondary);"></i> B2B Güvenli Görüşme Odaları</h3>
+                    <div class="chat-container">
+                        <div class="chat-channels" id="channelsList">
+                            <div class="channel-card active" onclick="selectChannel('Varna Maritime Hub OOD')">
+                                <div class="channel-avatar">VM</div>
+                                <div class="channel-info">
+                                    <h4>Varna Maritime Hub OOD</h4>
+                                    <p>Boş Frigo TIR hakkında...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-main">
+                            <div class="chat-window-header"><i class="fas fa-building" style="color:var(--secondary);"></i> <span id="chatWithTitle">Varna Maritime Hub OOD</span></div>
+                            <div class="chat-messages" id="chatMessagesBox">
+                                <div class="msg-balloon received">Merhaba, Samsun'dan kalkacak olan frigo tır bildirimini gördük. Dönüş yükü için Varna West HUB sahasında hazır paletli gıda malımız mevcut. Navlun fiyatınız ve gümrük bekleme planınız nedir?</div>
+                                <div class="msg-balloon sent">Selamlar, aracımız frigo standartlarındadır ve Kemalpaşa TIR parkında akıllı sıra kaydı mevcuttur. Hat için navlun detaylarını ve manifesto ayrıntılarını buradan görüşebiliriz.</div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" class="form-input" id="chatInput" placeholder="Mesajınızı yazın ve Enter'a basın..." onkeyup="if(event.key==='Enter') sendChatMessage()">
+                                <button class="chat-send-btn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i> GÖNDER</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- VERİTABANI VE YEREL HAFIZA YÖNETİMİ ---
+        let currentAuthTab = 'login';
+        let currentActiveView = 'board';
+        let currentBoardFilter = 'freight';
+        let loggedInCompany = "Samsun Global Logistics A.Ş.";
+
+        const mockAds = [
+            { id: 1, type: 'freight', origin: 'Samsun, TR', dest: 'Varna, BG', cargo: '20 Ton Endüstriyel Makine Parçası', date: '25.06.2026', company: 'Karadeniz Transit Express' },
+            { id: 2, type: 'freight', origin: 'İstanbul, TR', dest: 'Batum, GE', cargo: 'Frigo (22 Ton Taze Narenciye)', date: '28.06.2026', company: 'Samsun Global Logistics A.Ş.' },
+            { id: 3, type: 'truck', origin: 'Varna, BG', dest: 'Samsun, TR', cargo: 'Boş Tenteli Tır (Askılı, Havuzlu)', date: '24.06.2026', company: 'Varna Maritime Hub OOD' },
+            { id: 4, type: 'truck', origin: 'Batum, GE', dest: 'İstanbul, TR', cargo: 'Boş Frigo Araç (Zemin Sensörlü)', date: '29.06.2026', company: 'Ajara Cargo Trans' }
+        ];
+
+        // --- AUTH / GİRİŞ SİSTEMİ MANTIĞI ---
+        function switchAuthTab(type) {
+            currentAuthTab = type;
+            document.getElementById('tabLogin').className = type === 'login' ? 'auth-tab active' : 'auth-tab';
+            document.getElementById('tabRegister').className = type === 'register' ? 'auth-tab active' : 'auth-tab';
+            
+            const form = document.getElementById('authFormContent');
+            if(type === 'login') {
+                form.innerHTML = `<div class="form-group"><label>Resmi Kurumsal E-Posta</label><input type="email" class="form-input" id="authEmail" placeholder="ops@samsunglobal.com.tr"></div><div class="form-group"><label>Şifre</label><input type="password" class="form-input" id="authPass" placeholder="••••••••"></div><button class="auth-btn" onclick="simulatedLogin()">Sisteme Güvenli Giriş Yap</button><p style="font-size:11px; color:#64748b; margin-top:15px; font-weight:600;"><i class="fas fa-shield-alt" style="color:#16a34a;"></i> Sadece Interreg NEXT Karadeniz Havzası tescilli ve Oda onaylı firmalar girebilir.</p>`;
+            } else {
+                form.innerHTML = `<div class="form-group"><label>Firma Resmi Ünvanı</label><input type="text" class="form-input" id="regName" placeholder="Örn: Samsun Lojistik A.Ş."></div><div class="form-group"><label>Oda Sicil / Vergi No</label><input type="text" class="form-input" id="regNo" placeholder="Örn: TSO-362145"></div><div class="form-group"><label>Kurumsal E-Posta</label><input type="email" class="form-input" id="regEmail" placeholder="management@firma.com"></div><button class="auth-btn" onclick="alert('Kayıt başvurunuz Samsun Ticaret ve Sanayi Odası onay departmanına iletilmiştir. Doğrulama linki kurumsal e-postanıza gönderilecektir.')">Oda Onayına Gönder</button>`;
+            }
+        }
+
+        function simulatedLogin() {
+            const email = document.getElementById('authEmail').value;
+            if(!email) { alert("Lütfen kurumsal e-posta adresinizi girin."); return; }
+            
+            if(email.includes("samsun")) loggedInCompany = "Samsun Global Logistics A.Ş.";
+            else if(email.includes("varna")) loggedInCompany = "Varna Maritime Hub OOD";
+            else loggedInCompany = "Oda Kayıtlı Lojistik Operatörü";
+
+            document.getElementById('headerCompName').innerText = loggedInCompany;
+            document.getElementById('authOverlay').classList.add('hidden');
+            renderAds();
+        }
+
+        // --- SEKME GEÇİŞLERİ ---
+        function switchView(panelId) {
+            currentActiveView = panelId;
+            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+            
+            document.getElementById('btn-' + panelId).classList.add('active');
+            document.getElementById('panel-' + panelId).classList.add('active');
+            
+            if(panelId === 'chat') {
+                document.getElementById('msgCount').innerText = "0";
+                setTimeout(() => {
+                    const box = document.getElementById('chatMessagesBox');
+                    box.scrollTop = box.scrollHeight;
+                }, 50);
+            }
+        }
+
+        function switchBoardFilter(type) {
+            currentBoardFilter = type;
+            document.getElementById('bt-freight').className = type === 'freight' ? 'board-tab active' : 'board-tab';
+            document.getElementById('bt-truck').className = type === 'truck' ? 'board-tab active' : 'board-tab';
+            renderAds();
+        }
+
+        // --- İLAN BAĞLANTI MOTORU ---
+        function renderAds() {
+            const grid = document.getElementById('adsGrid');
+            grid.innerHTML = "";
+            const filtered = mockAds.filter(ad => ad.type === currentBoardFilter);
+            
+            filtered.forEach(ad => {
+                grid.innerHTML += `
+                <div class="ad-card">
+                    <div>
+                        <div class="ad-route">${ad.origin} <i class="fas fa-arrow-right" style="color:var(--secondary); font-size:14px;"></i> ${ad.dest}</div>
+                        <div class="ad-details">
+                            <item><span>Kapasite/Detay:</span> ${ad.cargo}</item>
+                            <item><span>Hazır Olma Tarihi:</span> ${ad.date}</item>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="ad-company"><i class="fas fa-award"></i> ${ad.company} (Oda Onaylı)</div>
+                        <button class="connect-btn" onclick="connectWithCompany('${ad.company}')"><i class="fas fa-comments"></i> Görüşmeyi Başlat</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // --- FORM İLAN EKLEME MANTIĞI ---
+        function submitNewAd() {
+            const type = document.getElementById('insType').value;
+            const origin = document.getElementById('insOrigin').value;
+            const dest = document.getElementById('insDest').value;
+            const cargo = document.getElementById('insCargo').value;
+            const dateInput = document.getElementById('insDate').value;
+
+            if(!origin || !dest || !cargo || !dateInput) { alert("Lütfen boş alanları doldurun."); return; }
+            
+            const d = new Date(dateInput);
+            const formattedDate = ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear();
+
+            const newId = mockAds.length + 1;
+            mockAds.unshift({ id: newId, type: type, origin: origin, dest: dest, cargo: cargo, date: formattedDate, company: loggedInCompany });
+            
+            alert("İlanınız Karadeniz Lojistik Borsası havuzuna eklendi.");
+            
+            document.getElementById('insOrigin').value = ""; document.getElementById('insDest').value = ""; document.getElementById('insCargo').value = ""; document.getElementById('insDate').value = "";
+            switchBoardFilter(type);
+            switchView('board');
+        }
+
+        // --- ANLIK CANLI MESAJLAŞMA SİMEDİ ---
+        function connectWithCompany(compName) {
+            if(compName === loggedInCompany) { alert("Kendi ilanınıza müzakere başlatamazsınız."); return; }
+            document.getElementById('chatWithTitle').innerText = compName;
+            
+            document.getElementById('channelsList').innerHTML = `
+                <div class="channel-card active">
+                    <div class="channel-avatar">${compName.substring(0,2).toUpperCase()}</div>
+                    <div class="channel-info">
+                        <h4>${compName}</h4>
+                        <p>Müzakere odası aktif...</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('chatMessagesBox').innerHTML = `
+                <div class="msg-balloon received">Sistem Bildirimi: <b>${loggedInCompany}</b> ile <b>${compName}</b> firmaları arasında gümrük ve navlun güvenli odası açıldı. Güvenle yazışabilirsiniz.</div>
+            `;
+            
+            switchView('chat');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            if(!input.value) return;
+            
+            const box = document.getElementById('chatMessagesBox');
+            box.innerHTML += `<div class="msg-balloon sent">${input.value}</div>`;
+            
+            const msg = input.value.toLowerCase();
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+
+            // Yapay Zekalı Otomatik Navlun Yanıt Döngüsü (Süper Pro Efekt)
+            setTimeout(() => {
+                let reply = "Mesajınız sistem havuzu üzerinden karşı firmanın lojistik yetkilisine iletildi. En kısa sürede geri dönüş sağlanacaktır.";
+                if(msg.includes("fiyat") || msg.includes("navlun") || msg.includes("teklif") || msg.includes("dolar") || msg.includes("euro")) {
+                    reply = "Güzergah üzerindeki gümrük geçiş maliyetleri ve boş kilometre dönüş endeksine göre navlun teklifimiz Ton başına hesaplanacaktır. Malın net manifesto detaylarını geçebilir misiniz?";
+                } else if(msg.includes("frigo") || msg.includes("derece") || msg.includes("soğuk")) {
+                    reply = "Araçlarımız çift rejimli frigo motora sahip olup yol boyunca data-logger (ısı takip raporu) kaydı tutulmaktadır. Gümrük teslimatında rapor ibraz edilecektir.";
+                }
+                box.innerHTML += `<div class="msg-balloon received">${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
